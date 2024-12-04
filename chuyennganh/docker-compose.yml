@@ -1,0 +1,57 @@
+name: SHOP-VANTOI
+x-common-configs: &common-configs
+  env_file:
+    - net.env
+  networks:
+    - external_network
+    - app-network
+  volumes:
+    - ./certs:/https
+    - ./settings/appsettings.json:/app/appsettings.json
+
+networks:
+  app-network:
+    driver: bridge
+  external_network:
+    external: true
+
+services:
+  assets-server:
+    image: image-shop
+    container_name: assets-server-chuyennganh
+    volumes:
+      - ./certs:/https
+      - ./settings/appsettings.json:/app/appsettings.json
+      - ./assets:/app/wwwroot/assets
+    env_file:
+      - net.env
+    ports:
+      - "1005:8081"
+    networks:
+      - app-network
+
+  chuyennganh:
+    image: shop-vantoi
+    ports:
+      - "1006:8081"
+    <<: *common-configs
+
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: sqlserver-chuyennganh
+    ports:
+      - "1434:1433"
+    environment:
+      SA_PASSWORD: "YourPassword123!"
+      ACCEPT_EULA: "Y"
+    volumes:
+      - ./sql-init:/var/opt/mssql/scripts
+      - ./data/sqlserver-data:/var/opt/mssql/data
+      - ./data/sqlserver-backup:/var/opt/mssql/backup
+    entrypoint:
+      - /bin/bash
+      - -c
+      - |
+        /opt/mssql/bin/sqlservr
+    networks:
+      - app-network
