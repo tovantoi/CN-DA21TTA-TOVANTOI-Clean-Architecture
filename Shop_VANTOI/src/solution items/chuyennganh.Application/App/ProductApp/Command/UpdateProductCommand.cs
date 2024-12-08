@@ -20,10 +20,10 @@ namespace chuyennganh.Application.App.ProductApp.Command
         public string? Packaging { get; set; }
         public string? Origin { get; set; }
         public string? Manufacturer { get; set; }
-        public string? ImagePath { get; set; }
+        public string? ImageData { get; set; }
         public string? SeoTitle { get; set; }
         public string? SeoAlias { get; set; }
-        public bool? IsActived { get; set; }
+        public bool? IsActive { get; set; }
         [JsonIgnore]
         public DateTime? UpdatedAt { get; set; } = DateTime.Now;
         public ICollection<int>? CategoryIds { get; set; } = new List<int>();

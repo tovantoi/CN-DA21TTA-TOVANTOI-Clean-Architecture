@@ -1,41 +1,70 @@
-import React from "react";
+import React, { useState } from "react";
+import emailjs from "@emailjs/browser";
 
 const ContactPage = () => {
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    message: "",
+  });
+
+  const [successMessage, setSuccessMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+
+  const handleInputChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    // Reset messages
+    setSuccessMessage("");
+    setErrorMessage("");
+
+    // Validate input fields
+    if (!formData.name || !formData.email || !formData.message) {
+      setErrorMessage("Vui lòng điền đầy đủ thông tin.");
+      return;
+    }
+
+    emailjs
+      .send(
+        "service_50yvdrt", // Replace with your Service ID
+        "template_wfeplcj", // Replace with your Template ID
+        formData,
+        "HF6Wcu5eZUxx-qnE4" // Replace with your Public Key
+      )
+      .then(
+        (response) => {
+          console.log("SUCCESS!", response.status, response.text);
+          setSuccessMessage("Phản hồi của bạn đã được gửi thành công!");
+          setErrorMessage("");
+          setFormData({ name: "", email: "", message: "" }); // Clear form
+        },
+        (err) => {
+          console.error("FAILED...", err);
+          setErrorMessage("Không thể gửi phản hồi. Vui lòng thử lại sau.");
+        }
+      );
+  };
+
   return (
     <div className="contact-page container py-5">
       <h1 className="text-center mb-4">Liên hệ với chúng tôi</h1>
-
-      {/* Thông tin liên hệ */}
-      <div className="row mb-5">
+      <div className="row">
+        {/* Form Liên Hệ - Cột trái */}
         <div className="col-md-6">
-          <h4>Thông tin liên hệ</h4>
-          <p>Công ty Cổ phần Thời Trang Việt Nam</p>
-          <p>
-            Hotline: <a href="tel:19008079">1900 8079</a>
-          </p>
-          <p>
-            Email:{" "}
-            <a href="mailto:support@fashionstore.com">
-              support@fashionstore.com
-            </a>
-          </p>
-          <p>Địa chỉ: Tầng 17, Tòa nhà Vincom, Quận Hai Bà Trưng, Hà Nội</p>
-        </div>
-        <div className="col-md-6">
-          <h4>Thời gian làm việc</h4>
-          <ul>
-            <li>Thứ 2 - Thứ 6: 8:30 - 19:00</li>
-            <li>Thứ 7: 8:30 - 17:00</li>
-            <li>Chủ nhật: Nghỉ</li>
-          </ul>
-        </div>
-      </div>
-
-      {/* Form liên hệ */}
-      <div className="row mb-5">
-        <div className="col-md-6">
-          <h4>Gửi phản hồi</h4>
-          <form>
+          <form onSubmit={handleSubmit}>
+            {successMessage && (
+              <div className="alert alert-success">{successMessage}</div>
+            )}
+            {errorMessage && (
+              <div className="alert alert-danger">{errorMessage}</div>
+            )}
             <div className="mb-3">
               <label htmlFor="name" className="form-label">
                 Họ và tên
@@ -44,7 +73,10 @@ const ContactPage = () => {
                 type="text"
                 className="form-control"
                 id="name"
+                name="name"
                 placeholder="Nhập họ và tên"
+                value={formData.name}
+                onChange={handleInputChange}
                 required
               />
             </div>
@@ -56,7 +88,10 @@ const ContactPage = () => {
                 type="email"
                 className="form-control"
                 id="email"
+                name="email"
                 placeholder="Nhập email"
+                value={formData.email}
+                onChange={handleInputChange}
                 required
               />
             </div>
@@ -67,8 +102,11 @@ const ContactPage = () => {
               <textarea
                 className="form-control"
                 id="message"
+                name="message"
                 rows="5"
                 placeholder="Nhập nội dung tin nhắn"
+                value={formData.message}
+                onChange={handleInputChange}
                 required
               ></textarea>
             </div>
@@ -78,8 +116,24 @@ const ContactPage = () => {
           </form>
         </div>
 
-        {/* Bản đồ */}
+        {/* Thông tin liên hệ và bản đồ - Cột phải */}
         <div className="col-md-6">
+          {/* Thông tin liên hệ */}
+          <h4>Thông tin liên hệ</h4>
+          <p>Công ty Cổ phần Thời Trang Việt Nam</p>
+          <p>
+            Hotline: <a href="tel:19008079">1900 8079</a>
+          </p>
+          <p>
+            Email:{" "}
+            <a href="mailto:tovantoi@fashionstore.com">
+              support@fashionstore.com
+            </a>
+          </p>
+          <p>Địa chỉ: Tầng 17, Tòa nhà Vincom, Phường 5, Trà Vinh</p>
+          <hr />
+
+          {/* Bản đồ */}
           <h4>Bản đồ</h4>
           <iframe
             title="Bản đồ"

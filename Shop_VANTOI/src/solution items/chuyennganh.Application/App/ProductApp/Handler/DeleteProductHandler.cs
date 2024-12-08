@@ -30,14 +30,14 @@ namespace chuyennganh.Application.App.ProductApp.Handler
             {
                 try
                 {
-                    var product = await productRepository.GetByIdAsync(request.Id!);
+                    var product = await productRepository.GetByIdAsync(request.Id!.Value);
                     if (product == null)
                     {
                         response.IsSuccess = false;
                         response.Message = "Product ID not found";
                         return response;
                     }
-                    await productRepository.DeleteAsync(request.Id);
+                    await productRepository.DeleteAsync(request.Id.Value);
                     await productRepository.SaveChangeAsync();
 
                     transaction.Commit();

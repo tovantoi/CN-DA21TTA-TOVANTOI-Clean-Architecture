@@ -36,7 +36,11 @@ const CartPage = ({ cart, setCart }) => {
               <div key={index} className="col-md-4 mb-3">
                 <div className="card h-100">
                   <img
-                    src={item.imagePath || "https://via.placeholder.com/150"}
+                    src={
+                      item.imagePath && item.imagePath !== "string"
+                        ? `https://localhost:7241/${item.imagePath}`
+                        : "https://via.placeholder.com/400"
+                    }
                     className="card-img-top"
                     alt={item.productName}
                     style={{ height: "150px", objectFit: "cover" }}

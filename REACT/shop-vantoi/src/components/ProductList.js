@@ -61,7 +61,10 @@ const ProductList = () => {
                   {product.description || "Sản phẩm không có mô tả."}
                 </p>
                 <p className="card-text text-primary fw-bold">
-                  Giá: {product.discountPrice || product.regularPrice} VND
+                  {product.discountPrice?.toLocaleString() || "N/A"} VND{" "}
+                  <span className="text-decoration-line-through text-muted fs-5">
+                    {product.regularPrice?.toLocaleString() || "N/A"} VND
+                  </span>
                 </p>
               </div>
             </div>

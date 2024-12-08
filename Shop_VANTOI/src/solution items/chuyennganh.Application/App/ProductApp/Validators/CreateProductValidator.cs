@@ -73,7 +73,7 @@ namespace chuyennganh.Application.App.ProductApp.Validators
                 .NotEmpty().WithMessage("SeoAlias không được rỗng.")
                 .MaximumLength(200).WithMessage("SeoAlias không được vượt quá 200 ký tự.");
 
-            RuleFor(p => p.IsActived)
+            RuleFor(p => p.IsActive)
                 .NotEmpty().WithMessage("Description không được rỗng.")
                 .NotNull().WithMessage("IsActive không được để trống.");
 

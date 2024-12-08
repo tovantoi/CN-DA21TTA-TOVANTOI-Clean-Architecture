@@ -5,7 +5,9 @@ using chuyennganh.Application.Repositories.CategoryRepo;
 using chuyennganh.Application.Repositories.ProductRepo;
 using chuyennganh.Application.Response;
 using chuyennganh.Application.Response.ProductsRP;
+using chuyennganh.Domain;
 using chuyennganh.Domain.Entities;
+using chuyennganh.Domain.Enumerations;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
@@ -18,16 +20,16 @@ namespace chuyennganh.Application.App.ProductApp.Handler
         private readonly IProductCategoryRepository productCategoryRepository;
         private readonly IMapper mapper;
         private readonly ILogger<UpdateProductHandler> logger;
-        //private readonly IWebHostEnvironment webHostEnvironment;
+        private readonly IFileService fileService;
 
-        public UpdateProductHandler(IProductRepository productRepository, IMapper mapper, ILogger<UpdateProductHandler> logger, ICategoryRepository categoryRepository, IProductCategoryRepository productCategoryRepository)
+        public UpdateProductHandler(IProductRepository productRepository, IMapper mapper, ILogger<UpdateProductHandler> logger, ICategoryRepository categoryRepository, IProductCategoryRepository productCategoryRepository, IFileService fileService)
         {
             this.productRepository = productRepository;
             this.mapper = mapper;
             this.logger = logger;
             this.categoryRepository = categoryRepository;
             this.productCategoryRepository = productCategoryRepository;
-            // this.webHostEnvironment = webHostEnvironment;
+            this.fileService = fileService;
         }
         public async Task<ServiceResponse> Handle(UpdateProductCommand request, CancellationToken cancellationToken)
         {
@@ -49,6 +51,12 @@ namespace chuyennganh.Application.App.ProductApp.Handler
                         response.Errors = validationResult.Errors?.Select(e => e.ErrorMessage).ToList() ?? new List<string>();
                         logger.LogWarning("Validation failed for UpdateProductRequest: {Errors}", response.Errors);
                         return response;
+                    }
+                    if (request.ImageData is not null)
+                    {
+                        string fileName = (Path.GetFileName(product.ImagePath) is { } name &&
+                        Path.GetExtension(name)?.ToLowerInvariant() == fileService.GetFileExtensionFromBase64(request.ImageData)?.ToLowerInvariant()) ? name : $"{product.Id}{fileService.GetFileExtensionFromBase64(request.ImageData)}";
+                        product.ImagePath = await fileService.UploadFile(fileName, request.ImageData, AssetType.PRODUCT_IMG);
                     }
                     if (request.CategoryIds is not null)
                     {

@@ -49,7 +49,7 @@ namespace chuyennganh.Application.App.CustomersApp.Customers.Handler
                     await customerRepository.UpdateAsync(customer);
                     await customerRepository.SaveChangeAsync();
                     await transaction.CommitAsync(cancellationToken);
-                    return ServiceResponse.Success("Cập nhật thành công");
+                    return ServiceResponse.Success("Cập nhật thông tin thành công");
                 }
                 catch (Exception)
                 {

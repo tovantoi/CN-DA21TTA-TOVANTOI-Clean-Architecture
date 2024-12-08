@@ -39,9 +39,10 @@ namespace chuyennganh.Api.Controllers
 
             if (!response.IsSuccess)
             {
-                return TypedResults.Ok(response);
+                return TypedResults.BadRequest(response); 
             }
-            return TypedResults.BadRequest(response);
+
+            return TypedResults.Ok(response);
         }
 
 
@@ -51,7 +52,7 @@ namespace chuyennganh.Api.Controllers
             var command = mapper.Map<AuthenCustomerRequest>(request);
             command.Email = email;
             var result = await mediator.Send(command);
-            if (!result.IsSuccess)
+            if (result.IsSuccess)
             {
                 return TypedResults.Ok(result);
             }
@@ -64,7 +65,7 @@ namespace chuyennganh.Api.Controllers
             var command = mapper.Map<ResendOTPRequest>(request);
             command.Email = email;
             var result = await mediator.Send(command);
-            if (!result.IsSuccess)
+            if (result.IsSuccess)
             {
                 return TypedResults.Ok(result);
             }
@@ -76,7 +77,7 @@ namespace chuyennganh.Api.Controllers
         {
             var command = mapper.Map<LogoutCustomerRequest>(request);
             var result = await mediator.Send(command);
-            if (!result.IsSuccess)
+            if (result.IsSuccess)
             {
                 return TypedResults.Ok(result);
             }
@@ -90,7 +91,7 @@ namespace chuyennganh.Api.Controllers
             var command = mapper.Map<UpdateProifleCustomerRequest>(request);
             command.Id = id;
             var result = await mediator.Send(command);
-            if (!result.IsSuccess)
+            if (result.IsSuccess)
             {
                 return TypedResults.Ok(result);
             }
@@ -100,17 +101,69 @@ namespace chuyennganh.Api.Controllers
         [HttpGet("/get-customer-by-id")]
         public static async Task<IResult> GetCustomerById(int id, IMediator mediator)
         {
-            var command = new GetCustomerByIdCustomerRequest();
-            command.Id = id;
-            var result = await mediator.Send(command);
-            return TypedResults.BadRequest(result);
+            var command = new GetCustomerByIdCustomerRequest { Id = id };
+
+            try
+            {
+                var customer = await mediator.Send(command);
+                if (customer == null)
+                {
+                    return TypedResults.BadRequest(new
+                    {
+                        IsSuccess = false,
+                        Message = "Customer not found",
+                        Data = (object?)null
+                    });
+                }
+                return TypedResults.Ok(new
+                {
+                    IsSuccess = true,
+                    Message = "Customer retrieved successfully",
+                    Data = customer
+                });
+            }
+            catch (Exception ex)
+            {
+                return TypedResults.NotFound(new
+                {
+                    IsSuccess = false,
+                    Message = ex.Message,
+                    Data = (object?)null
+                });
+            }
         }
+
 
         [HttpGet("/get-customers")]
         public static async Task<IResult> GetAllCustomerRoles(IMediator mediator)
         {
             var command = new GetAllCustomerRequest();
             var result = await mediator.Send(command);
+            return TypedResults.BadRequest(result);
+        }
+
+        [HttpPut("/change-password")]
+        public static async Task<IResult> ChangePassword(string? email, IMediator mediator)
+        {
+            var command = new ChangePasswordRequest();
+            command.Email = email;
+            var result = await mediator.Send(command);
+            if (result.IsSuccess)
+            {
+                return TypedResults.Ok(result);
+            }
+            return TypedResults.BadRequest(result);
+        }
+        [HttpPut("/update-customer-password")]
+        public static async Task<IResult> UpdateCustomerPassword(string? email, [FromBody] UpdateCustomerPasswordRequest request, IMediator mediator, IMapper mapper)
+        {
+            var command = mapper.Map<UpdateCustomerPasswordRequest>(request);
+            command.Email = email;
+            var result = await mediator.Send(command);
+            if (result.IsSuccess)
+            {
+                return TypedResults.Ok(result);
+            }
             return TypedResults.BadRequest(result);
         }
     }

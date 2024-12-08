@@ -13,7 +13,9 @@ const ProductManagement = () => {
   const fetchProducts = async () => {
     setLoading(true);
     try {
-      const response = await fetch("https://localhost:7022/admin/api/products");
+      const response = await fetch(
+        "https://localhost:7022/minimal/api/get-products"
+      );
       if (!response.ok) throw new Error("Không thể lấy danh sách sản phẩm.");
       const data = await response.json();
       setProducts(data);
@@ -25,18 +27,40 @@ const ProductManagement = () => {
   };
 
   const handleDelete = async (id) => {
+    console.log("Deleting product with ID:", id);
+
     if (!window.confirm("Bạn có chắc muốn xóa sản phẩm này?")) return;
 
     try {
+      if (!id) {
+        throw new Error("Sản phẩm không tồn tại.");
+      }
+
       const response = await fetch(
-        `https://localhost:7022/admin/api/products/${id}`,
-        { method: "DELETE" }
+        `https://localhost:7022/minimal/api/delete-product?id=${id}`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
       );
-      if (!response.ok) throw new Error("Không thể xóa sản phẩm.");
-      setProducts(products.filter((product) => product.id !== id));
-      setSuccessMessage("Xóa sản phẩm thành công!");
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error("Lỗi từ server:", errorText);
+        throw new Error(errorText || "Không thể xóa sản phẩm.");
+      }
+
+      const result = await response.json();
+      if (result.isSuccess) {
+        setProducts(products.filter((product) => product.id !== id));
+        setSuccessMessage("Xóa sản phẩm thành công!");
+      } else {
+        setError(result.message || "Không thể xóa sản phẩm.");
+      }
     } catch (err) {
-      setError(err.message);
+      setError(`Lỗi: ${err.message}`);
     }
   };
 
@@ -56,35 +80,59 @@ const ProductManagement = () => {
       <table className="table table-striped">
         <thead>
           <tr>
+            <th>Hình ảnh</th>
             <th>Tên sản phẩm</th>
             <th>Giá</th>
+            <th>Trạng thái</th>
             <th>Hành động</th>
           </tr>
         </thead>
         <tbody>
           {loading ? (
             <tr>
-              <td colSpan="3" className="text-center">
+              <td colSpan="5" className="text-center">
                 Đang tải...
               </td>
             </tr>
           ) : products.length > 0 ? (
             products.map((product) => (
-              <tr key={product.id}>
+              <tr key={product.productId}>
+                <td>
+                  <img
+                    src={
+                      product.imagePath && product.imagePath !== "string"
+                        ? `https://localhost:7241/${product.imagePath}`
+                        : "https://via.placeholder.com/400"
+                    }
+                    alt={product.productName}
+                    style={{
+                      width: "50px",
+                      height: "50px",
+                      objectFit: "cover",
+                    }}
+                  />
+                </td>
                 <td>{product.productName}</td>
                 <td>{product.discountPrice || product.regularPrice} VND</td>
+                <td>
+                  {product.isActive == 1 ? (
+                    <span className="badge bg-success">Còn hàng</span>
+                  ) : (
+                    <span className="badge bg-danger">Hết hàng</span>
+                  )}
+                </td>
                 <td>
                   <button
                     className="btn btn-warning me-2"
                     onClick={() =>
-                      (window.location.href = `/admin/products/${product.id}`)
+                      (window.location.href = `/admin/products/${product.productId}`)
                     }
                   >
                     Sửa
                   </button>
                   <button
                     className="btn btn-danger"
-                    onClick={() => handleDelete(product.id)}
+                    onClick={() => handleDelete(product.id)} // Sử dụng productId tại đây
                   >
                     Xóa
                   </button>
@@ -93,7 +141,7 @@ const ProductManagement = () => {
             ))
           ) : (
             <tr>
-              <td colSpan="3" className="text-center">
+              <td colSpan="5" className="text-center">
                 Không có sản phẩm
               </td>
             </tr>

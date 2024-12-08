@@ -5,16 +5,21 @@ const Header = ({ cart }) => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const [error, setError] = useState("");
-  const [user, setUser] = useState(null); // Thêm state để lưu thông tin người dùng
+  const [user, setUser] = useState(null);
 
-  // Kiểm tra trạng thái đăng nhập khi component được mount
   useEffect(() => {
-    const storedUser = JSON.parse(localStorage.getItem("user"));
-    if (storedUser) {
-      setUser(storedUser); // Nếu có thông tin người dùng, lưu vào state
+    try {
+      const userData = localStorage.getItem("user");
+
+      if (userData) {
+        const parsedUser = JSON.parse(userData);
+        setUser(parsedUser);
+      }
+    } catch (error) {
+      console.error("Lỗi khi lấy dữ liệu người dùng từ localStorage:", error);
+      setUser(null);
     }
   }, []);
-
   const handleSearch = async () => {
     if (!searchQuery.trim()) {
       setError("Vui lòng nhập từ khóa tìm kiếm!");
@@ -57,7 +62,7 @@ const Header = ({ cart }) => {
 
   const handleLogout = () => {
     localStorage.removeItem("user");
-    setUser(null); // Cập nhật lại trạng thái người dùng
+    setUser(null);
     alert("Đăng xuất thành công!");
     navigate("/login");
   };
@@ -133,6 +138,11 @@ const Header = ({ cart }) => {
                   <li>
                     <Link to="/my-account" className="dropdown-item">
                       Tài khoản của tôi
+                    </Link>
+                  </li>
+                  <li>
+                    <Link to="/request-otp" className="dropdown-item">
+                      Thay đổi mật khẩu
                     </Link>
                   </li>
                   <li>

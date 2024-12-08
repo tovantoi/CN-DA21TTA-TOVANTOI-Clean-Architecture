@@ -28,7 +28,7 @@ namespace chuyennganh.Infrasture.Context.Configurations
             builder.Property(x => x.SeoTitle).HasColumnName("SeoTitle");
             builder.Property(x => x.SeoAlias).HasColumnName("SeoAlias");
             builder.Property(x => x.CreatedAt).HasColumnName("CreatedAt");
-            builder.Property(x => x.IsActived).HasColumnName("IsActive");
+            builder.Property(x => x.IsActive).HasColumnName("IsActive");
 
             builder.HasMany(x => x.ProductCategories).WithOne().HasForeignKey(x => x.ProductId);
         }

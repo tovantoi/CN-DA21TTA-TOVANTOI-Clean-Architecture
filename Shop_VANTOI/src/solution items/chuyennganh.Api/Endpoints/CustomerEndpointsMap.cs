@@ -13,9 +13,11 @@ namespace chuyennganh.Api.Endpoints
             customers.MapPut("/authen-customer", CustomersController.AuthenCustomer);
             customers.MapPost("/resend-otp", CustomersController.ResendOTP);
             customers.MapPost("/customer-logout", CustomersController.Logout);
-            customers.MapGet("/get-customer-by-id", CustomersController.GetCustomerById);
-            customers.MapGet("/get-customers", CustomersController.GetAllCustomerRoles);
-
+            customers.MapGet("/get-customer-by-id", CustomersController.GetCustomerById); 
+            customers.MapGet("/get-customers", CustomersController.GetAllCustomerRoles); 
+            customers.MapPut("/change-password", CustomersController.ChangePassword);
+            customers.MapPut("/update-customer-password", CustomersController.UpdateCustomerPassword);
+            customers.MapPut("/update-profile-customer", CustomersController.UpdateCustomerProfile);
             return app;
         }
     }

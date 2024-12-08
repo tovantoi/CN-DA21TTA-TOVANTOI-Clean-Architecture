@@ -21,7 +21,7 @@ namespace chuyennganh.Application.App.ProductApp.Command
         public string? ImageData { get; set; }
         public string? SeoTitle { get; set; }
         public string? SeoAlias { get; set; }
-        public bool? IsActived { get; set; } = false;
+        public bool? IsActive { get; set; } = false;
 
         [JsonIgnore]
         public DateTime? CreatedAt { get; set; } = DateTime.Now;

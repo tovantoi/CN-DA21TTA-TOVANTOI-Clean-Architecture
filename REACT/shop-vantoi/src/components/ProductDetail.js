@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 
 const ProductDetail = ({ addToCart }) => {
-  const { productId } = useParams(); // Lấy `productId` từ URL
+  const { productId } = useParams();
   const [product, setProduct] = useState(null);
   const [error, setError] = useState("");
   const navigate = useNavigate();
@@ -75,10 +75,7 @@ const ProductDetail = ({ addToCart }) => {
           <h2>{product.productName}</h2>
           <p className="text-muted">Thương hiệu: {product.brand || "N/A"}</p>
           <p className="text-danger fs-4">
-            {product.discountPrice?.toLocaleString() || "N/A"} VND{" "}
-            <span className="text-decoration-line-through text-muted fs-5">
-              {product.regularPrice?.toLocaleString() || "N/A"} VND
-            </span>
+            Giá: {product.discountPrice || product.regularPrice} VND
           </p>
           <ul>
             <li>{product.description}</li>

@@ -13,11 +13,11 @@ const MyAccountPage = () => {
     const fetchCustomerById = async () => {
       try {
         const userData = JSON.parse(localStorage.getItem("user"));
-        if (!userData || !userData.CustomerId) {
+        if (!userData || !userData.id) {
           throw new Error("Người dùng chưa đăng nhập.");
         }
 
-        const userId = userData.CustomerId;
+        const userId = userData.id;
 
         const response = await fetch(
           `https://localhost:7022/minimal/api/get-customer-by-id?id=${userId}`
@@ -28,13 +28,22 @@ const MyAccountPage = () => {
         }
 
         const data = await response.json();
+        console.log("API Response:", data);
+        console.log("User from LocalStorage:", localStorage.getItem("user"));
 
-        setUser(data);
+        // Kiểm tra `isSuccess`
+        if (!data.isSuccess) {
+          throw new Error(data.message || "Không thể lấy thông tin tài khoản.");
+        }
+
+        // Gán thông tin khách hàng vào state
+        setUser(data.data);
         setFormData({
-          name: data.name || "",
-          email: data.email || "",
+          name: data.data.firstName || "",
+          email: data.data.email || "",
         });
       } catch (err) {
+        console.error("Error fetching customer by ID:", err);
         setError(err.message || "Đã xảy ra lỗi. Vui lòng thử lại sau.");
       }
     };
@@ -51,30 +60,44 @@ const MyAccountPage = () => {
 
   const handleSave = async () => {
     try {
+      const userData = JSON.parse(localStorage.getItem("user"));
+      const userId = userData.id;
+
+      const updatedData = {
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        phoneNumber: formData.phoneNumber,
+        imageData: formData.imageData || null, // Base64 của ảnh
+      };
+
       const response = await fetch(
-        "https://localhost:7022/minimal/api/update-profile-customer", 
+        `https://localhost:7022/minimal/api/update-profile-customer?id=${userId}`,
         {
-          method: "POST",
+          method: "PUT",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({
-            id: user.CustomerId,
-            name: formData.name,
-            email: formData.email,
-          }),
+          body: JSON.stringify(updatedData),
         }
       );
 
-      if (!response.ok) {
-        throw new Error("Cập nhật thông tin thất bại.");
+      const result = await response.json();
+
+      if (!response.ok || !result.isSuccess) {
+        throw new Error(result.message || "Cập nhật thông tin thất bại.");
       }
 
-      setUser(formData);
-      localStorage.setItem("user", JSON.stringify({ ...user, ...formData }));
+      const updatedUser = {
+        ...userData,
+        ...updatedData,
+      };
+
+      setUser(updatedUser);
+      localStorage.setItem("user", JSON.stringify(updatedUser));
       setIsEditing(false);
-      alert("Thông tin cá nhân đã được cập nhật!");
+      alert(result.message || "Cập nhật thông tin thành công!");
     } catch (err) {
+      console.error(err);
       setError(err.message || "Đã xảy ra lỗi. Vui lòng thử lại sau.");
     }
   };
@@ -97,11 +120,29 @@ const MyAccountPage = () => {
           <>
             <h4>Thông tin cá nhân</h4>
             <p>
-              <strong>Tên:</strong> {user.name}
+              <strong>Avatar:</strong>{" "}
+              <img
+                src={
+                  user.avatarImagePath && user.avatarImagePath !== "string"
+                    ? `https://localhost:7241/${user.avatarImagePath}`
+                    : "https://via.placeholder.com/100"
+                }
+                alt="Thumbnail"
+                className="img-thumbnail"
+                style={{ width: "60px", height: "60px" }}
+              />
+            </p>
+            <p>
+              <strong>Họ và tên:</strong> {user.firstName} {user.lastName}
+            </p>
+            <p>
+              <strong>Số điện thoại:</strong>{" "}
+              {user.phoneNumber || "Chưa cập nhật"}
             </p>
             <p>
               <strong>Email:</strong> {user.email}
             </p>
+
             <button
               className="btn btn-primary"
               onClick={() => setIsEditing(true)}
@@ -113,14 +154,40 @@ const MyAccountPage = () => {
           <>
             <h4>Chỉnh sửa thông tin</h4>
             <div className="mb-3">
-              <label htmlFor="name" className="form-label">
+              <label htmlFor="firstName" className="form-label">
+                Họ
+              </label>
+              <input
+                type="text"
+                id="firstName"
+                name="firstName"
+                value={formData.firstName}
+                onChange={handleInputChange}
+                className="form-control"
+              />
+            </div>
+            <div className="mb-3">
+              <label htmlFor="lastName" className="form-label">
                 Tên
               </label>
               <input
                 type="text"
-                id="name"
-                name="name"
-                value={formData.name}
+                id="lastName"
+                name="lastName"
+                value={formData.lastName}
+                onChange={handleInputChange}
+                className="form-control"
+              />
+            </div>
+            <div className="mb-3">
+              <label htmlFor="phoneNumber" className="form-label">
+                Số điện thoại
+              </label>
+              <input
+                type="text"
+                id="phoneNumber"
+                name="phoneNumber"
+                value={formData.phoneNumber}
                 onChange={handleInputChange}
                 className="form-control"
               />
@@ -135,6 +202,31 @@ const MyAccountPage = () => {
                 name="email"
                 value={formData.email}
                 onChange={handleInputChange}
+                className="form-control"
+              />
+            </div>
+            <div className="mb-3">
+              <label htmlFor="imageData" className="form-label">
+                Ảnh đại diện
+              </label>
+              <input
+                type="file"
+                id="imageData"
+                name="imageData"
+                accept="image/*"
+                onChange={(e) => {
+                  const file = e.target.files[0];
+                  if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                      setFormData({
+                        ...formData,
+                        imageData: event.target.result,
+                      });
+                    };
+                    reader.readAsDataURL(file); // Đọc file và chuyển thành Base64
+                  }
+                }}
                 className="form-control"
               />
             </div>

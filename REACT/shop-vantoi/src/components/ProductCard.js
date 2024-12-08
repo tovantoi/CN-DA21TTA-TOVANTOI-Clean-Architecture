@@ -11,7 +11,7 @@ const ProductCard = ({ product }) => {
         src={
           product.imagePath && product.imagePath !== "string"
             ? `https://localhost:7241/${product.imagePath}`
-            : "https://via.placeholder.com/150"
+            : "https://via.placeholder.com/400"
         }
         alt={product.productName}
         style={{ width: "100%", height: "150px", objectFit: "cover" }}

@@ -5,6 +5,8 @@ const LoginPage = () => {
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false); 
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -17,9 +19,9 @@ const LoginPage = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
 
-    // Reset messages on each login attempt
     setMessage("");
     setError("");
+    setIsLoading(true);
 
     try {
       const response = await fetch(
@@ -36,14 +38,22 @@ const LoginPage = () => {
       const data = await response.json();
 
       if (response.ok && data.isSuccess) {
-        localStorage.setItem("user", JSON.stringify(data));
+        const userData = data.query; 
+
+        localStorage.setItem("user", JSON.stringify(userData));
 
         setMessage(data.message || "Đăng nhập thành công!");
 
-        if (data.role === 1) {
-          navigate("/admin");
-        } else if (data.role === 0) {
-          navigate("/");
+        setIsLoggedIn(true);
+
+        if (userData && userData.role !== undefined) {
+          if (userData.role === 1) {
+            navigate("/admin");
+          } else if (userData.role === 0) {
+            navigate("/");
+          }
+        } else {
+          setError("Dữ liệu người dùng không hợp lệ");
         }
       } else {
         setError(data.message || "Đăng nhập thất bại. Vui lòng kiểm tra lại.");
@@ -51,6 +61,8 @@ const LoginPage = () => {
     } catch (err) {
       console.error(err);
       setError("Đã xảy ra lỗi. Vui lòng thử lại sau.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -87,8 +99,12 @@ const LoginPage = () => {
               required
             />
           </div>
-          <button type="submit" className="btn btn-primary w-100">
-            Đăng nhập
+          <button
+            type="submit"
+            className="btn btn-primary w-100"
+            disabled={isLoading}
+          >
+            {isLoading ? "Đang đăng nhập..." : "Đăng nhập"}
           </button>
         </form>
       </div>

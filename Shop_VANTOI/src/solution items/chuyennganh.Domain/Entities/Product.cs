@@ -21,7 +21,7 @@ namespace chuyennganh.Domain.Entities
         public string? ImagePath { get; set; }
         public string? SeoTitle { get; set; }
         public string? SeoAlias { get; set; }
-        public bool? IsActived { get; set; }
+        public bool? IsActive { get; set; }
         public DateTime? CreatedAt { get; set; }
 
         [JsonIgnore]

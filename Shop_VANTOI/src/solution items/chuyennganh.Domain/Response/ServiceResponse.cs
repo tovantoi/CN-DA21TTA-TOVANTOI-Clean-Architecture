@@ -12,7 +12,7 @@ namespace chuyennganh.Application.Response
 
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public string? Data { get; set; }
-        public string? Token { get; set; }
+        public object? Query { get; set; }
 
         // Static method for successful response
         public static ServiceResponse Success(string message, string? token = null)
@@ -22,7 +22,6 @@ namespace chuyennganh.Application.Response
                 IsSuccess = true,
                 StatusCode = StatusCodes.Status200OK,
                 Message = message,
-                Token = token,
                 Errors = null
             };
         }
@@ -35,7 +34,6 @@ namespace chuyennganh.Application.Response
                 IsSuccess = false,
                 Message = message,
                 Errors = errors,
-                Token = null
             };
         }
 
@@ -47,7 +45,6 @@ namespace chuyennganh.Application.Response
                 IsSuccess = false,
                 Message = message,
                 Errors = new List<string> { error },
-                Token = null
             };
         }
     }

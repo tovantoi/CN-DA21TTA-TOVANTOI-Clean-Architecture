@@ -77,23 +77,26 @@ const CheckoutPage = ({ cart, setCart }) => {
       const customerAddressId = addressData.data.id; // ID địa chỉ giao hàng từ API
 
       // Gọi API tạo đơn hàng
-      const orderResponse = await fetch("https://localhost:7022/minimal/api/create-order", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          customerId: 13, // Thay đổi theo cơ chế đăng nhập
-          customerAddressId,
-          couponCode: formData.discountCode || null,
-          paymentMethod: formData.paymentMethod,
-          totalPrice,
-          orderItems: cart.map((item) => ({
-            productId: item.id,
-            quantity: item.quantity || 1,
-          })),
-        }),
-      });
+      const orderResponse = await fetch(
+        "https://localhost:7022/minimal/api/create-order",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            customerId: 13, // Thay đổi theo cơ chế đăng nhập
+            customerAddressId,
+            couponCode: formData.discountCode || null,
+            paymentMethod: formData.paymentMethod,
+            totalPrice,
+            orderItems: cart.map((item) => ({
+              productId: item.id,
+              quantity: item.quantity || 1,
+            })),
+          }),
+        }
+      );
 
       const orderData = await orderResponse.json();
 
@@ -223,7 +226,9 @@ const CheckoutPage = ({ cart, setCart }) => {
               checked={formData.shippingMethod === "GHN - Tiêu chuẩn"}
               onChange={handleInputChange}
             />
-            <label className="ms-2">GHN - Tiêu chuẩn (+ {shippingFee} VND)</label>
+            <label className="ms-2">
+              GHN - Tiêu chuẩn (+ {shippingFee} VND)
+            </label>
           </div>
         </div>
 
@@ -238,7 +243,11 @@ const CheckoutPage = ({ cart, setCart }) => {
               >
                 <div>
                   <img
-                    src={item.imagePath || "https://via.placeholder.com/150"}
+                    src={
+                      item.imagePath && item.imagePath !== "string"
+                        ? `https://localhost:7241/${item.imagePath}`
+                        : "https://via.placeholder.com/400"
+                    }
                     alt={item.productName}
                     style={{
                       width: "50px",
@@ -256,7 +265,7 @@ const CheckoutPage = ({ cart, setCart }) => {
               </li>
             ))}
             <li className="list-group-item d-flex justify-content-between">
-              <strong>Tổng sản phẩm</strong>
+              <strong>Tổng giá sản phẩm</strong>
               <span>{totalProductPrice.toLocaleString()} VND</span>
             </li>
             <li className="list-group-item d-flex justify-content-between">
@@ -301,7 +310,10 @@ const CheckoutPage = ({ cart, setCart }) => {
               value={formData.discountCode}
               onChange={handleInputChange}
             />
-            <button className="btn btn-primary ms-2" onClick={handleApplyDiscount}>
+            <button
+              className="btn btn-primary ms-2"
+              onClick={handleApplyDiscount}
+            >
               Sử dụng
             </button>
           </div>
