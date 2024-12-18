@@ -1,0 +1,61 @@
+.dashboard {
+    padding: 20px;
+    background-color: #f8f9fa;
+  }
+  
+  .dashboard-title {
+    text-align: center;
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+  
+  .grid-container {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* Chia thành 4 cột */
+    gap: 20px;
+  }
+  
+  .info-card {
+    text-align: center;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    padding: 15px;
+    font-size: 16px;
+  }
+  
+  .value {
+    font-size: 22px;
+    font-weight: bold;
+    color: #36A2EB;
+  }
+  
+  .chart {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    padding: 15px;
+    height: 300px; /* Cố định chiều cao */
+  }
+  
+  .large-chart {
+    grid-column: span 4; /* Biểu đồ lớn chiếm 4 cột */
+    height: 400px;
+  }
+  
+  .medium-chart {
+    grid-column: span 2; /* Biểu đồ trung bình chiếm 2 cột */
+  }
+  
+  .sales-rep {
+    grid-column: span 2;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    padding: 15px;
+  }
+  
+  .sales-card {
+    margin: 5px 0;
+  }
+  

@@ -38,9 +38,13 @@ const ProductDetail = ({ addToCart }) => {
 
   return (
     <div className="container mt-4">
-      <button onClick={() => navigate(-1)} className="btn btn-light mb-3">
+      <button
+        onClick={() => navigate(-1)}
+        className="btn btn-primary btn-lg mb-3"
+      >
         Quay lại
       </button>
+
       <div className="row">
         {/* Hình ảnh sản phẩm */}
         <div className="col-md-6">

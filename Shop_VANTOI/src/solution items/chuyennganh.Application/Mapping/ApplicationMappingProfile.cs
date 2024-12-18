@@ -17,6 +17,7 @@ namespace chuyennganh.Application.Mapping
         public ApplicationMappingProfile()
         {
             #region Product
+            CreateMap<Product, ProductDTO>().ReverseMap();
             CreateMap<CreateProductCommand, Product>();
             CreateMap<CreateProductCommand, CreateProductValidator>().ReverseMap();
             CreateMap<Product, ServiceResponse>().ReverseMap();

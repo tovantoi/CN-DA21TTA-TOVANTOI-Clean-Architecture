@@ -1,0 +1,27 @@
+.admin-sidebar h2 {
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+.admin-sidebar ul {
+  list-style: none;
+  padding: 0;
+}
+
+.admin-sidebar ul li {
+  margin-bottom: 10px;
+}
+
+.admin-sidebar ul li a {
+  color: #bdc3c7;
+  text-decoration: none;
+}
+
+.admin-sidebar ul li a.active {
+  color: #fff;
+  font-weight: bold;
+}
+
+.admin-sidebar ul li a:hover {
+  color: #ecf0f1;
+}

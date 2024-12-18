@@ -1,4 +1,5 @@
 ﻿using chuyennganh.Domain.Base;
+using chuyennganh.Domain.Enumerations;
 using System.Text.Json.Serialization;
 
 namespace chuyennganh.Domain.Entities
@@ -10,8 +11,8 @@ namespace chuyennganh.Domain.Entities
         public int? CustomerAddressId { get; set; }
         public int? CouponId { get; set; }
         public string? Payment { get; set; }
-      //  public OrderStatus? Status { get; set; }
-        public int? Status { get; set; }
+        public OrderStatus? Status { get; set; }
+       // public int? Status { get; set; }
         public decimal? TotalPrice { get; set; }
         public DateTime? CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }

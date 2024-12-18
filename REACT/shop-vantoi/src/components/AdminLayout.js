@@ -1,11 +1,15 @@
-// components/AdminLayout.js
 import React from "react";
+import { Outlet } from "react-router-dom";
+import AdminSidebar from "./AdminSidebar";
+import "../pages/AdminCss/AdminLayout.css"; // Đảm bảo có CSS cơ bản
 
-const AdminLayout = ({ children }) => {
+const AdminLayout = () => {
   return (
-    <div>
-      {/* Không có Header và Footer cho Admin */}
-      <div>{children}</div>
+    <div className="admin-layout">
+      <AdminSidebar />
+      <div className="admin-content">
+        <Outlet /> {/* Render nội dung từng trang con */}
+      </div>
     </div>
   );
 };

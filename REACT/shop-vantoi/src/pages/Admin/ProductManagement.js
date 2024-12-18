@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 const ProductManagement = () => {
   const [products, setProducts] = useState([]);
@@ -6,12 +7,17 @@ const ProductManagement = () => {
   const [error, setError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
 
+  const navigate = useNavigate(); // Sử dụng useNavigate để điều hướng
+
   useEffect(() => {
     fetchProducts();
   }, []);
 
+  // Fetch danh sách sản phẩm
   const fetchProducts = async () => {
     setLoading(true);
+    setError("");
+    setSuccessMessage("");
     try {
       const response = await fetch(
         "https://localhost:7022/minimal/api/get-products"
@@ -26,16 +32,11 @@ const ProductManagement = () => {
     }
   };
 
+  // Xóa sản phẩm
   const handleDelete = async (id) => {
-    console.log("Deleting product with ID:", id);
-
     if (!window.confirm("Bạn có chắc muốn xóa sản phẩm này?")) return;
 
     try {
-      if (!id) {
-        throw new Error("Sản phẩm không tồn tại.");
-      }
-
       const response = await fetch(
         `https://localhost:7022/minimal/api/delete-product?id=${id}`,
         {
@@ -48,7 +49,6 @@ const ProductManagement = () => {
 
       if (!response.ok) {
         const errorText = await response.text();
-        console.error("Lỗi từ server:", errorText);
         throw new Error(errorText || "Không thể xóa sản phẩm.");
       }
 
@@ -57,7 +57,7 @@ const ProductManagement = () => {
         setProducts(products.filter((product) => product.id !== id));
         setSuccessMessage("Xóa sản phẩm thành công!");
       } else {
-        setError(result.message || "Không thể xóa sản phẩm.");
+        throw new Error(result.message || "Không thể xóa sản phẩm.");
       }
     } catch (err) {
       setError(`Lỗi: ${err.message}`);
@@ -67,16 +67,19 @@ const ProductManagement = () => {
   return (
     <div className="container my-4">
       <h2 className="text-center mb-4">Quản lý sản phẩm</h2>
+
       {error && <div className="alert alert-danger">{error}</div>}
       {successMessage && (
         <div className="alert alert-success">{successMessage}</div>
       )}
+
       <button
         className="btn btn-success mb-3"
-        onClick={() => (window.location.href = "/admin/products/new")}
+        onClick={() => navigate("/admin/products/new")} // Sử dụng navigate
       >
         Thêm sản phẩm
       </button>
+
       <table className="table table-striped">
         <thead>
           <tr>
@@ -125,14 +128,14 @@ const ProductManagement = () => {
                   <button
                     className="btn btn-warning me-2"
                     onClick={() =>
-                      (window.location.href = `/admin/products/${product.productId}`)
+                      navigate(`/admin/editproducts/${product.id}`)
                     }
                   >
                     Sửa
                   </button>
                   <button
                     className="btn btn-danger"
-                    onClick={() => handleDelete(product.id)} // Sử dụng productId tại đây
+                    onClick={() => handleDelete(product.id)} // Đảm bảo dùng productId
                   >
                     Xóa
                   </button>

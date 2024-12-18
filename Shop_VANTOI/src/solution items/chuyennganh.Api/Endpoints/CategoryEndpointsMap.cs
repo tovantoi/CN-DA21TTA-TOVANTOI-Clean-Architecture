@@ -9,9 +9,9 @@ namespace chuyennganh.Api.Endpoints
             var category = app.MapGroup("/minimal/api");
 
             category.MapPost("/create-category", CategoryController.CreateCategory);
-
-            //category.MapDelete("/{id:int}", CategoryController.Delete);
-
+            category.MapGet("/get-category-by-id", CategoryController.GetByIdCategory);
+            category.MapGet("/get-categories", CategoryController.GetAllCategory); 
+            category.MapDelete("/delete-category", CategoryController.Delete);
             category.MapPut("/update-category", CategoryController.UpdateCategory);
             return app;
         }

@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using chuyennganh.Application.App.CategoryApp.Command;
 using chuyennganh.Application.App.CategoryApp.Query.Queries;
+using chuyennganh.Application.App.ProductApp.Command;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,12 +11,28 @@ namespace chuyennganh.Api.Controllers
     [ApiController]
     public class CategoryController : ControllerBase
     {
+        [HttpDelete("/delete-category")]
+        public static async Task<IResult> Delete(int id, IMediator mediator)
+        {
+            var command = new DeleteCategoryRequest { Id = id };
+            var result = await mediator.Send(command);
+            if (result.IsSuccess)
+            {
+                return TypedResults.Ok(result);
+            }
+            return TypedResults.BadRequest(result);
+        }
+
         [HttpPost("/create-category")]
         public static async Task<IResult> CreateCategory([FromBody] CreateCategoryRequest request, IMediator mediator, IMapper mapper)
         {
                 var command = mapper.Map<CreateCategoryRequest>(request);
                 var result = await mediator.Send(command);
-                return TypedResults.BadRequest(result);
+            if (result.IsSuccess)
+            {
+                return TypedResults.Ok(result);
+            }
+            return TypedResults.BadRequest(result);
         }
 
         [HttpPut("/update-category")]
@@ -24,7 +41,11 @@ namespace chuyennganh.Api.Controllers
                 var command = mapper.Map<UpdateCategoryRequest>(request);
                 command.Id = id;
                 var result = await mediator.Send(command);
-                return TypedResults.BadRequest(result);
+            if (result.IsSuccess)
+            {
+                return TypedResults.Ok(result);
+            }
+            return TypedResults.BadRequest(result);
         }
 
         [HttpGet("/get-category-by-id")]
@@ -33,7 +54,7 @@ namespace chuyennganh.Api.Controllers
                 var command = new GetByIdCategoryRequest();
                 command.Id = id;
                 var result = await mediator.Send(command);
-                return TypedResults.BadRequest(result);
+                return TypedResults.Ok(result);
         }
 
         [HttpGet("/get-categories")]
@@ -41,7 +62,7 @@ namespace chuyennganh.Api.Controllers
         {
                 var command = new GetAllCategoryRequest();
                 var result = await mediator.Send(command);
-                return TypedResults.BadRequest(result);
+                return TypedResults.Ok(result);
         }
     }
 }

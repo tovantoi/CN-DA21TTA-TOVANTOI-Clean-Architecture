@@ -8,7 +8,6 @@ const HomePage = () => {
       <main>
         <Banner />
         <section id="categories">
-          <h2>Danh mục sản phẩm</h2>
           <CategoryList />
         </section>
       </main>

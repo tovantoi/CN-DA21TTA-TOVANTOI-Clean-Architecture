@@ -6,7 +6,7 @@ const LoginPage = () => {
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false); 
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -38,7 +38,7 @@ const LoginPage = () => {
       const data = await response.json();
 
       if (response.ok && data.isSuccess) {
-        const userData = data.query; 
+        const userData = data.query;
 
         localStorage.setItem("user", JSON.stringify(userData));
 
@@ -48,7 +48,7 @@ const LoginPage = () => {
 
         if (userData && userData.role !== undefined) {
           if (userData.role === 1) {
-            navigate("/admin");
+            navigate("/admin/dashboard");
           } else if (userData.role === 0) {
             navigate("/");
           }

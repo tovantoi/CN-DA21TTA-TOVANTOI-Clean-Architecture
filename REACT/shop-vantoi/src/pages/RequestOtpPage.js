@@ -31,7 +31,8 @@ const RequestOtpPage = () => {
       if (response.ok && result.isSuccess) {
         localStorage.setItem("userEmail", email);
         setSuccess(
-          "Mã OTP đã được gửi thành công. Vui lòng kiểm tra email của bạn."
+          result.message ||
+            "Mã OTP đã được gửi thành công. Vui lòng kiểm tra email của bạn."
         );
         navigate("/change-password", { state: { email } });
       } else {

@@ -2,9 +2,8 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 const ProductEditPage = () => {
-  const { productId } = useParams();
+  const { productId } = useParams(); // Lấy productId từ URL
   const navigate = useNavigate();
-  
   const [product, setProduct] = useState({
     productName: "",
     regularPrice: "",
@@ -22,32 +21,26 @@ const ProductEditPage = () => {
     seoTitle: "",
     seoAlias: "",
     isActive: true,
-    categoryIds: [],
   });
-  
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Fetch product details when the page loads
   useEffect(() => {
     const fetchProductDetails = async () => {
       try {
         const response = await fetch(
           `https://localhost:7022/minimal/api/get-product-detail?id=${productId}`
         );
+        if (!response.ok) throw new Error("Không thể tải thông tin sản phẩm.");
         const data = await response.json();
-        if (data) {
-          setProduct(data);
-        } else {
-          setError("Không tìm thấy sản phẩm.");
-        }
+        setProduct(data); // Cập nhật state sản phẩm
       } catch (err) {
-        setError("Đã xảy ra lỗi khi tải sản phẩm.");
+        setError(err.message);
       } finally {
         setLoading(false);
       }
     };
-    
+
     fetchProductDetails();
   }, [productId]);
 
@@ -55,23 +48,27 @@ const ProductEditPage = () => {
     e.preventDefault();
 
     try {
-      const response = await fetch(`https://localhost:7022/minimal/api/update-product`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(product),
-      });
+      const response = await fetch(
+        `https://localhost:7022/minimal/api/update-product?id=${productId}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(product),
+        }
+      );
 
-      const result = await response.json();
-      if (response.ok && result.isSuccess) {
-        alert("Cập nhật sản phẩm thành công!");
-        navigate("/admin/products");
-      } else {
-        setError(result.message || "Lỗi khi cập nhật sản phẩm.");
+      if (!response.ok) {
+        const result = await response.json();
+        throw new Error(result.message || "Cập nhật sản phẩm thất bại.");
       }
+
+      alert("Cập nhật sản phẩm thành công!");
+      
+      navigate("/admin/products");
     } catch (err) {
-      setError("Đã xảy ra lỗi khi cập nhật sản phẩm.");
+      setError(err.message);
     }
   };
 
@@ -82,6 +79,21 @@ const ProductEditPage = () => {
       [name]: value,
     }));
   };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        setProduct((prevProduct) => ({
+          ...prevProduct,
+          imageData: event.target.result, // Chuyển hình ảnh sang Base64
+        }));
+      };
+      reader.readAsDataURL(file); // Đọc file
+    }
+  };
+
 
   const handleCheckboxChange = (e) => {
     const { name, checked } = e.target;
@@ -98,6 +110,33 @@ const ProductEditPage = () => {
     <div className="container mt-4">
       <h2>Sửa sản phẩm</h2>
       <form onSubmit={handleSubmit}>
+      <div className="mb-3">
+          <label htmlFor="imageData" className="form-label">
+            Hình ảnh sản phẩm
+          </label>
+          <input
+            type="file"
+            id="imageData"
+            name="imageData"
+            accept="image/*"
+            onChange={handleFileChange}
+            className="form-control"
+          />
+        </div>
+
+        {product.imageData && (
+          <div className="mb-3">
+            <label className="form-label">Xem trước hình ảnh</label>
+            <div className="preview-container">
+              <img
+                src={product.imageData}
+                alt="Xem trước sản phẩm"
+                className="img-thumbnail"
+                style={{ maxWidth: "300px", height: "auto" }}
+              />
+            </div>
+          </div>
+        )}
         <div className="mb-3">
           <label htmlFor="productName" className="form-label">
             Tên sản phẩm
@@ -112,7 +151,7 @@ const ProductEditPage = () => {
             required
           />
         </div>
-        
+
         <div className="mb-3">
           <label htmlFor="regularPrice" className="form-label">
             Giá thường
@@ -127,7 +166,7 @@ const ProductEditPage = () => {
             required
           />
         </div>
-        
+
         <div className="mb-3">
           <label htmlFor="discountPrice" className="form-label">
             Giá khuyến mãi
@@ -155,26 +194,155 @@ const ProductEditPage = () => {
           ></textarea>
         </div>
 
+        {/* Các trường mới được thêm */}
         <div className="mb-3">
-          <label htmlFor="categoryIds" className="form-label">
-            Chọn danh mục
+          <label htmlFor="brand" className="form-label">
+            Thương hiệu
+          </label>
+          <input
+            type="text"
+            className="form-control"
+            id="brand"
+            name="brand"
+            value={product.brand}
+            onChange={handleChange}
+          />
+        </div>
+
+        <div className="mb-3">
+          <label htmlFor="size" className="form-label">
+            Kích thước
+          </label>
+          <input
+            type="text"
+            className="form-control"
+            id="size"
+            name="size"
+            value={product.size}
+            onChange={handleChange}
+          />
+        </div>
+
+        <div className="mb-3">
+          <label htmlFor="color" className="form-label">
+            Màu sắc
+          </label>
+          <input
+            type="text"
+            className="form-control"
+            id="color"
+            name="color"
+            value={product.color}
+            onChange={handleChange}
+          />
+        </div>
+
+        <div className="mb-3">
+          <label htmlFor="material" className="form-label">
+            Chất liệu
+          </label>
+          <input
+            type="text"
+            className="form-control"
+            id="material"
+            name="material"
+            value={product.material}
+            onChange={handleChange}
+          />
+        </div>
+
+        <div className="mb-3">
+          <label htmlFor="gender" className="form-label">
+            Giới tính
           </label>
           <select
-            multiple
-            className="form-control"
-            id="categoryIds"
-            name="categoryIds"
-            value={product.categoryIds}
+            className="form-select"
+            id="gender"
+            name="gender"
+            value={product.gender}
             onChange={handleChange}
           >
-            {/* Categories should be fetched and listed here */}
-            <option value="1">Category 1</option>
-            <option value="2">Category 2</option>
-            <option value="3">Category 3</option>
+            <option value="">Chọn giới tính</option>
+            <option value="Nam">Nam</option>
+            <option value="Nữ">Nữ</option>
+            <option value="Unisex">Unisex</option>
           </select>
         </div>
 
-        <div className="mb-3 form-check">
+        <div className="mb-3">
+          <label htmlFor="packaging" className="form-label">
+            Bao bì
+          </label>
+          <input
+            type="text"
+            className="form-control"
+            id="packaging"
+            name="packaging"
+            value={product.packaging}
+            onChange={handleChange}
+          />
+        </div>
+
+        <div className="mb-3">
+          <label htmlFor="origin" className="form-label">
+            Xuất xứ
+          </label>
+          <input
+            type="text"
+            className="form-control"
+            id="origin"
+            name="origin"
+            value={product.origin}
+            onChange={handleChange}
+          />
+        </div>
+
+        <div className="mb-3">
+          <label htmlFor="manufacturer" className="form-label">
+            Nhà sản xuất
+          </label>
+          <input
+            type="text"
+            className="form-control"
+            id="manufacturer"
+            name="manufacturer"
+            value={product.manufacturer}
+            onChange={handleChange}
+          />
+        </div>
+
+        <div className="mb-3">
+          <label htmlFor="seoTitle" className="form-label">
+            Tiêu đề SEO
+          </label>
+          <input
+            type="text"
+            className="form-control"
+            id="seoTitle"
+            name="seoTitle"
+            value={product.seoTitle}
+            onChange={handleChange}
+          />
+        </div>
+
+        <div className="mb-3">
+          <label htmlFor="seoAlias" className="form-label">
+            SEO Alias
+          </label>
+          <input
+            type="text"
+            className="form-control"
+            id="seoAlias"
+            name="seoAlias"
+            value={product.seoAlias}
+            onChange={handleChange}
+          />
+        </div>
+
+        <div className="mb-3">
+          <label htmlFor="isActive" className="form-label">
+            Trạng thái sản phẩm
+          </label>
           <input
             type="checkbox"
             className="form-check-input"
@@ -184,7 +352,7 @@ const ProductEditPage = () => {
             onChange={handleCheckboxChange}
           />
           <label className="form-check-label" htmlFor="isActive">
-            Sản phẩm đang bán
+            Còn hàng
           </label>
         </div>
 

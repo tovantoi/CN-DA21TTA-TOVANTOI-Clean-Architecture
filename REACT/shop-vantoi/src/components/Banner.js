@@ -38,7 +38,12 @@ const Banner = () => {
             src="/assets/bn1.png"
             className="d-block w-100"
             alt="Slide 1"
-            style={{ height: "600px", objectFit: "cover" }}
+            style={{
+              height: "600px",
+              width: "100%",
+              objectFit: "contain",
+              backgroundColor: "#f8f9fa", // Tùy chọn thêm màu nền
+            }}
           />
         </div>
         <div className="carousel-item">
@@ -46,7 +51,12 @@ const Banner = () => {
             src="/assets/bn2.png"
             className="d-block w-100"
             alt="Slide 2"
-            style={{ height: "600px", objectFit: "cover" }}
+            style={{
+              height: "600px",
+              width: "100%",
+              objectFit: "contain",
+              backgroundColor: "#f8f9fa", // Tùy chọn thêm màu nền
+            }}
           />
         </div>
         <div className="carousel-item">
@@ -54,7 +64,12 @@ const Banner = () => {
             src="/assets/bn3.png"
             className="d-block w-100"
             alt="Slide 3"
-            style={{ height: "600px", objectFit: "cover" }}
+            style={{
+              height: "600px",
+              width: "100%",
+              objectFit: "contain",
+              backgroundColor: "#f8f9fa", // Tùy chọn thêm màu nền
+            }}
           />
         </div>
       </div>

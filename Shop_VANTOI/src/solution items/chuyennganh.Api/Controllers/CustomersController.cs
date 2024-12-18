@@ -139,7 +139,7 @@ namespace chuyennganh.Api.Controllers
         {
             var command = new GetAllCustomerRequest();
             var result = await mediator.Send(command);
-            return TypedResults.BadRequest(result);
+            return TypedResults.Ok(result);
         }
 
         [HttpPut("/change-password")]

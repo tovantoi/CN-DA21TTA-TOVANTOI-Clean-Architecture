@@ -46,6 +46,16 @@ const CheckoutPage = ({ cart, setCart }) => {
     setSuccessMessage("");
 
     try {
+      // Lấy thông tin người dùng từ localStorage
+      const user = JSON.parse(localStorage.getItem("user"));
+
+      if (!user || !user.id) {
+        // Nếu không có người dùng (chưa đăng nhập), redirect đến trang đăng nhập
+        throw new Error("Bạn cần đăng nhập để tạo đơn hàng.");
+      }
+
+      const customerId = user.id; // Lấy customerId từ thông tin người dùng
+
       // Gọi API tạo địa chỉ khách hàng
       const addressResponse = await fetch(
         "https://localhost:7022/minimal/api/create-customeraddress",
@@ -55,7 +65,7 @@ const CheckoutPage = ({ cart, setCart }) => {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            customerId: 13, // Thay đổi theo cơ chế đăng nhập
+            customerId, // Dùng customerId từ người dùng đã đăng nhập
             fullName: formData.fullName,
             phone: formData.phone,
             province: formData.city,
@@ -74,9 +84,8 @@ const CheckoutPage = ({ cart, setCart }) => {
         );
       }
 
-      const customerAddressId = addressData.data.id; // ID địa chỉ giao hàng từ API
+      const customerAddressId = addressData.data.id; 
 
-      // Gọi API tạo đơn hàng
       const orderResponse = await fetch(
         "https://localhost:7022/minimal/api/create-order",
         {
@@ -85,11 +94,10 @@ const CheckoutPage = ({ cart, setCart }) => {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            customerId: 13, // Thay đổi theo cơ chế đăng nhập
+            customerId, 
             customerAddressId,
-            couponCode: formData.discountCode || null,
+            couponCode: formData.discountCode || null, 
             paymentMethod: formData.paymentMethod,
-            totalPrice,
             orderItems: cart.map((item) => ({
               productId: item.id,
               quantity: item.quantity || 1,

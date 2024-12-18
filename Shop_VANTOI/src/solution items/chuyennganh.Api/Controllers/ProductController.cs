@@ -64,7 +64,7 @@ namespace chuyennganh.Api.Controllers
         {
             var query = new GetProductByIDQueris { Id = id };
             var result = await mediator.Send(query);
-            return TypedResults.BadRequest(result);
+            return TypedResults.Ok(result);
         }
 
         [HttpGet("/get-products")]
@@ -86,6 +86,17 @@ namespace chuyennganh.Api.Controllers
                 command.Id = id;
                 var result = await mediator.Send(command);
                 return TypedResults.Ok(result);
+        }
+
+        [HttpGet("/get-products-by-category")]
+        public static async Task<IResult> GetAllProductByCategory(int? id, int? pageNumber, int? pageSize, IMediator mediator)
+        {
+            var command = new GetProductByCategoryIdRequest();
+            command.CategoryId = id;
+            command.PageNumber = pageNumber ?? 1;
+            command.PageSize = pageSize ?? 6;
+            var result = await mediator.Send(command);
+            return TypedResults.Ok(result);
         }
     }
 }

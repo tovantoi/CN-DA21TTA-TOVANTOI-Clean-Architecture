@@ -1,4 +1,5 @@
 ﻿using chuyennganh.Api.Controllers;
+using chuyennganh.Domain.Entities;
 
 namespace chuyennganh.Api.Endpoints
 {
@@ -14,7 +15,7 @@ namespace chuyennganh.Api.Endpoints
             product.MapGet("/get-product-by-id", ProductController.GetById);
             product.MapGet("/get-products", ProductController.GetAll);
             product.MapGet("/get-product-detail", ProductController.GetProductDetail);
-
+            product.MapGet("/get-products-by-category", ProductController.GetAllProductByCategory);
             return app;
         }
     }

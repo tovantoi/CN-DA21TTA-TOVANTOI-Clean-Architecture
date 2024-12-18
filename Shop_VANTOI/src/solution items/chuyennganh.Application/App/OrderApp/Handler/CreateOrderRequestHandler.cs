@@ -7,6 +7,7 @@ using chuyennganh.Application.Repositories.OrderRepo;
 using chuyennganh.Application.Repositories.ProductRepo;
 using chuyennganh.Application.Response;
 using chuyennganh.Domain.Entities;
+using chuyennganh.Domain.Enumerations;
 using chuyennganh.Domain.ExceptionEx;
 using MediatR;
 
@@ -46,7 +47,7 @@ namespace chuyennganh.Application.App.OrderApp.Handler
                         CustomerId = request.CustomerId,
                         CustomerAddressId = request.CustomerAddressId,
                         Payment = request.PaymentMethod,
-                        Status = 1,
+                        Status = OrderStatus.Pending,
                         TotalPrice = 0,
                         CreatedAt = DateTime.Now,
                     };
