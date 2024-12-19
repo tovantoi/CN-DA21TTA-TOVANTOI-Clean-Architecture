@@ -20,7 +20,7 @@ const ProductManagement = () => {
     setSuccessMessage("");
     try {
       const response = await fetch(
-        "https://localhost:7022/minimal/api/get-products"
+        "https://localhost:7022/minimal/api/get-products-admin"
       );
       if (!response.ok) throw new Error("Không thể lấy danh sách sản phẩm.");
       const data = await response.json();
@@ -56,6 +56,9 @@ const ProductManagement = () => {
       if (result.isSuccess) {
         setProducts(products.filter((product) => product.id !== id));
         setSuccessMessage("Xóa sản phẩm thành công!");
+        setTimeout(() => {
+          setSuccessMessage(""); 
+        }, 3000);
       } else {
         throw new Error(result.message || "Không thể xóa sản phẩm.");
       }
@@ -75,7 +78,7 @@ const ProductManagement = () => {
 
       <button
         className="btn btn-success mb-3"
-        onClick={() => navigate("/admin/products/new")} // Sử dụng navigate
+        onClick={() => navigate("/admin/add-product")} // Sử dụng navigate
       >
         Thêm sản phẩm
       </button>

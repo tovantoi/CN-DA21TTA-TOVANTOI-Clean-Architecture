@@ -230,9 +230,9 @@ const MyAccountPage = () => {
                 className="form-control"
               />
             </div>
-            <button className="btn btn-success me-2" onClick={handleSave}>
+            <button className="btn btn-success" onClick={handleSave}>
               Lưu
-            </button>
+            </button><br></br>
             <button
               className="btn btn-secondary"
               onClick={() => setIsEditing(false)}

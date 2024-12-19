@@ -65,8 +65,9 @@ const ProductEditPage = () => {
       }
 
       alert("Cập nhật sản phẩm thành công!");
-      
-      navigate("/admin/products");
+      setTimeout(() => {
+        navigate("/admin/products");
+      }, 1500);
     } catch (err) {
       setError(err.message);
     }
@@ -94,7 +95,6 @@ const ProductEditPage = () => {
     }
   };
 
-
   const handleCheckboxChange = (e) => {
     const { name, checked } = e.target;
     setProduct((prevProduct) => ({
@@ -110,7 +110,7 @@ const ProductEditPage = () => {
     <div className="container mt-4">
       <h2>Sửa sản phẩm</h2>
       <form onSubmit={handleSubmit}>
-      <div className="mb-3">
+        <div className="mb-3">
           <label htmlFor="imageData" className="form-label">
             Hình ảnh sản phẩm
           </label>

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using chuyennganh.Application.App.CategoryApp.Command;
 using chuyennganh.Application.App.CustomersApp.Customers.Command;
 using chuyennganh.Application.App.CustomersApp.Customers.Query.Queries;
 using MediatR;
@@ -18,6 +19,17 @@ namespace chuyennganh.Api.Controllers
         {
             this.mediator = mediator;
             this.mapper = mapper;
+        }
+        [HttpDelete("/delete-customer")]
+        public static async Task<IResult> Delete(int id, IMediator mediator)
+        {
+            var command = new DeleteCustomerRequest { Id = id };
+            var result = await mediator.Send(command);
+            if (result.IsSuccess)
+            {
+                return TypedResults.Ok(result);
+            }
+            return TypedResults.BadRequest(result);
         }
 
         [HttpPost("/register-customer")]

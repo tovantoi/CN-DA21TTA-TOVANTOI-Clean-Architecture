@@ -1,45 +1,46 @@
 ﻿using AutoMapper;
 using chuyennganh.Application.App.CategoryApp.Command;
-using chuyennganh.Application.App.CategoryApp.Validators;
+using chuyennganh.Application.App.CustomersApp.Validators;
 using chuyennganh.Application.Repositories.CategoryRepo;
+using chuyennganh.Application.Repositories.CustomerRPRepo;
 using chuyennganh.Application.Repositories.ProductRepo;
 using chuyennganh.Application.Response;
 using FluentValidation;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
-namespace chuyennganh.Application.App.CategoryApp.Handler
+namespace chuyennganh.Application.App.CustomersApp.Customers.Handler
 {
-    public class DeleteCategoryRequestHandler : IRequestHandler<DeleteCategoryRequest, ServiceResponse>
+    public class DeleteCustomerRequestHandler : IRequestHandler<DeleteCustomerRequest, ServiceResponse>
     {
-        private readonly ICategoryRepository categoryRepository;
+        private readonly ICustomerRepository customerRepository;
         private readonly IMapper mapper;
-        private readonly ILogger<DeleteCategoryRequestHandler> logger;
+        private readonly ILogger<DeleteCustomerRequestHandler> logger;
 
-        public DeleteCategoryRequestHandler(IProductRepository productRepository, IMapper mapper, ILogger<DeleteCategoryRequestHandler> logger, ICategoryRepository categoryRepository)
+        public DeleteCustomerRequestHandler(IProductRepository productRepository, IMapper mapper, ILogger<DeleteCustomerRequestHandler> logger, ICategoryRepository categoryRepository, ICustomerRepository customerRepository)
         {
             this.mapper = mapper;
             this.logger = logger;
-            this.categoryRepository = categoryRepository;
+            this.customerRepository = customerRepository;
         }
-        public async Task<ServiceResponse> Handle(DeleteCategoryRequest request, CancellationToken cancellationToken)
+        public async Task<ServiceResponse> Handle(DeleteCustomerRequest request, CancellationToken cancellationToken)
         {
             var response = new ServiceResponse();
-            var validator = new DeleteCategoryRequestValidator();
+            var validator = new DeleteCustomerRequestValidator();
             validator.ValidateAndThrow(request);
-            await using (var transaction = categoryRepository.BeginTransaction())
+            await using (var transaction = customerRepository.BeginTransaction())
             {
                 try
                 {
-                    var product = await categoryRepository.GetByIdAsync(request.Id!.Value);
+                    var product = await customerRepository.GetByIdAsync(request.Id!.Value);
                     if (product == null)
                     {
                         response.IsSuccess = false;
-                        response.Message = "Category ID not found";
+                        response.Message = "Customer ID not found";
                         return response;
                     }
-                    await categoryRepository.DeleteAsync(request.Id.Value);
-                    await categoryRepository.SaveChangeAsync();
+                    await customerRepository.DeleteAsync(request.Id.Value);
+                    await customerRepository.SaveChangeAsync();
 
                     transaction.Commit();
 

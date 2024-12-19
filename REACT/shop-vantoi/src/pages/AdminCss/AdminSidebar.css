@@ -1,27 +1,87 @@
-.admin-sidebar h2 {
-  font-size: 24px;
-  margin-bottom: 20px;
+/* Basic layout */
+.admin-layout {
+  display: flex;
 }
 
+.admin-sidebar {
+  width: 250px;
+  background-color: #343a40; /* Darker color for a professional look */
+  color: #fff;
+  min-height: 100vh;
+  padding: 20px;
+  border-right: 2px solid #dee2e6; /* Subtle border for separation */
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1); /* Shadow effect for depth */
+}
+
+.admin-content {
+  flex: 1;
+  padding: 20px;
+  background-color: #f8f9fa; /* Lighter background for the content area */
+}
+
+/* Sidebar header */
+.admin-sidebar h2 {
+  font-size: 1.5rem;
+  margin-bottom: 30px;
+  font-weight: bold;
+  text-transform: uppercase;
+  color: #f8f9fa;
+  text-align: center;
+}
+
+/* Sidebar links */
 .admin-sidebar ul {
   list-style: none;
   padding: 0;
 }
 
 .admin-sidebar ul li {
-  margin-bottom: 10px;
+  margin-bottom: 15px;
 }
 
 .admin-sidebar ul li a {
-  color: #bdc3c7;
+  color: #adb5bd; /* Soft light color for normal links */
   text-decoration: none;
+  font-size: 1.1rem;
+  padding: 10px;
+  border-radius: 4px;
+  display: block;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.admin-sidebar ul li a.active,
+.admin-sidebar ul li a:hover {
+  color: #fff; /* Highlighted color */
+  background-color: #007bff; /* Bootstrap primary color for hover and active */
+  font-weight: 500; /* Emphasize active link */
 }
 
 .admin-sidebar ul li a.active {
-  color: #fff;
-  font-weight: bold;
+  background-color: #0056b3; /* Darker blue for active link */
 }
 
-.admin-sidebar ul li a:hover {
-  color: #ecf0f1;
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .admin-sidebar {
+    width: 100%;
+    position: fixed;
+    z-index: 1000;
+    height: 100vh;
+    top: 0;
+    left: 0;
+    display: none; /* Hidden by default on smaller screens */
+    background-color: #343a40;
+  }
+
+  .admin-sidebar.active {
+    display: block; /* Show sidebar when active */
+  }
+
+  .admin-layout {
+    flex-direction: column;
+  }
+
+  .admin-content {
+    margin-left: 0;
+  }
 }

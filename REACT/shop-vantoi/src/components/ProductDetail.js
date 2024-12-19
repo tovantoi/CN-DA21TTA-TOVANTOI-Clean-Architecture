@@ -68,7 +68,7 @@ const ProductDetail = ({ addToCart }) => {
                 }
                 alt="Thumbnail"
                 className="img-thumbnail"
-                style={{ width: "60px", height: "60px" }}
+                style={{ width: "100px", height: "100px" }}
               />
             </div>
           </div>

@@ -24,6 +24,28 @@ const CustomerManagement = () => {
     }
   };
 
+  const handleDelete = async (id) => {
+    if (window.confirm("Bạn có chắc chắn muốn xoá khách hàng này?")) {
+      try {
+        const response = await fetch(
+          `https://localhost:7022/minimal/api/delete-customer?id=${id}`,
+          {
+            method: "DELETE",
+          }
+        );
+
+        if (response.ok) {
+          setCustomers(customers.filter((customer) => customer.id !== id));
+          alert("Khách hàng đã được xoá.");
+        } else {
+          alert("Không thể xoá khách hàng.");
+        }
+      } catch (err) {
+        alert("Đã xảy ra lỗi khi xoá khách hàng.");
+      }
+    }
+  };
+
   return (
     <div className="container my-4">
       <h2 className="text-center">Quản lý khách hàng</h2>
@@ -36,12 +58,13 @@ const CustomerManagement = () => {
             <th>Email</th>
             <th>Số điện thoại</th>
             <th>Avatar</th>
+            <th>Hành động</th>
           </tr>
         </thead>
         <tbody>
           {loading ? (
             <tr>
-              <td colSpan="3" className="text-center">
+              <td colSpan="6" className="text-center">
                 Đang tải...
               </td>
             </tr>
@@ -55,21 +78,31 @@ const CustomerManagement = () => {
                 <td>
                   <img
                     src={
-                      customer.avatarImagePath &&
-                      customer.avatarImagePath !== "string"
+                      customer.avatarImagePath && customer.avatarImagePath !== "string"
                         ? `https://localhost:7241/${customer.avatarImagePath}`
-                        : "https://via.placeholder.com/100"
+                        : "https://via.placeholder.com/400"
                     }
-                    alt="Thumbnail"
-                    className="img-thumbnail"
-                    style={{ width: "60px", height: "60px" }}
+                    alt={customer.firstName}
+                    style={{
+                      width: "50px",
+                      height: "50px",
+                      objectFit: "cover",
+                    }}
                   />
+                </td>
+                <td>
+                  <button
+                    className="btn btn-danger"
+                    onClick={() => handleDelete(customer.id)}
+                  >
+                    Xoá
+                  </button>
                 </td>
               </tr>
             ))
           ) : (
             <tr>
-              <td colSpan="3" className="text-center">
+              <td colSpan="6" className="text-center">
                 Không có khách hàng
               </td>
             </tr>

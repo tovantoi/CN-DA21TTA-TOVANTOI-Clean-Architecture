@@ -16,8 +16,9 @@ namespace chuyennganh.Api.Endpoints
             customers.MapGet("/get-customer-by-id", CustomersController.GetCustomerById); 
             customers.MapGet("/get-customers", CustomersController.GetAllCustomerRoles); 
             customers.MapPut("/change-password", CustomersController.ChangePassword);
-            customers.MapPut("/update-customer-password", CustomersController.UpdateCustomerPassword);
+            customers.MapPut("/update-customer-password", CustomersController.UpdateCustomerPassword); 
             customers.MapPut("/update-profile-customer", CustomersController.UpdateCustomerProfile);
+            customers.MapDelete("/delete-customer", CustomersController.Delete);
             return app;
         }
     }

@@ -6,6 +6,7 @@ const Banner = () => {
       id="carouselExampleIndicators"
       className="carousel slide"
       data-bs-ride="carousel"
+      data-bs-interval="3000" // Thời gian giữa các slide (3000ms = 3 giây)
     >
       {/* Indicators */}
       <div className="carousel-indicators">

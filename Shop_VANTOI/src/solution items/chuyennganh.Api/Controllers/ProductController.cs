@@ -68,15 +68,21 @@ namespace chuyennganh.Api.Controllers
         }
 
         [HttpGet("/get-products")]
-        public static async Task<IResult> GetAll(IMediator mediator)
+        public static async Task<IResult> GetAll(IMediator mediator, int? pageNumber, int? pageSize)
         {
-            var query = new GetAllProductQueris();
-            var result = await mediator.Send(query);
-            if (result != null && result.Any())
-            {
-                return TypedResults.Ok(result);
-            }
-            return TypedResults.NotFound("Không có sản phẩm nào."); 
+            var command = new GetAllProductsQueris();
+            command.PageNumber = pageNumber ?? 1;
+            command.PageSize = pageSize ?? 8;
+            var result = await mediator.Send(command);
+            return TypedResults.Ok(result);
+        }
+
+        [HttpGet("/get-products-admin")]
+        public static async Task<IResult> GetAllProductAdmin(IMediator mediator)
+        {
+            var command = new GetAllProductAdminQueris();
+            var result = await mediator.Send(command);
+            return TypedResults.Ok(result);
         }
 
         [HttpGet("/get-product-detail")]

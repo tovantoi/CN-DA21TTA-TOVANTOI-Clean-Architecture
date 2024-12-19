@@ -38,14 +38,13 @@ namespace chuyennganh.Api.Controllers
         [HttpPut("/update-category")]
         public static async Task<IResult> UpdateCategory(int? id, [FromBody] UpdateCategoryRequest request, IMediator mediator, IMapper mapper)
         {
-                var command = mapper.Map<UpdateCategoryRequest>(request);
-                command.Id = id;
-                var result = await mediator.Send(command);
-            if (result.IsSuccess)
+            request.Id = id;
+            var results = await mediator.Send(request);
+            if (results.IsSuccess)
             {
-                return TypedResults.Ok(result);
+                return TypedResults.Ok(results);
             }
-            return TypedResults.BadRequest(result);
+            return Results.BadRequest(new { isSuccess = false, message = "Lỗi chi tiết" });
         }
 
         [HttpGet("/get-category-by-id")]
