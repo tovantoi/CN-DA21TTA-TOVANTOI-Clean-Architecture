@@ -17,6 +17,19 @@ const AddCategory = () => {
 
   useEffect(() => {
     const fetchCategories = async () => {
+      const swalInstance = Swal.fire({
+        title: "Đang lấy thông tin danh mục...",
+        width: 600,
+        padding: "3em",
+        color: "#716add",
+        background: "#fff",
+        backdrop: `
+                rgba(0,0,123,0.4)
+                url("/assets/loading.png")
+                left top
+                no-repeat
+              `,
+      });
       try {
         const response = await fetch(
           "https://localhost:7022/minimal/api/get-categories"
@@ -24,8 +37,10 @@ const AddCategory = () => {
         if (!response.ok) throw new Error("Không thể tải danh mục.");
         const data = await response.json();
         setCategories(data);
+        swalInstance.close();
       } catch (err) {
         setError(err.message || "Đã xảy ra lỗi khi tải danh mục.");
+        swalInstance.close();
       }
     };
 

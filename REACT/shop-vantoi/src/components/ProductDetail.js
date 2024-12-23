@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
 
 const ProductDetail = ({ addToCart }) => {
   const { productId } = useParams();
@@ -10,6 +11,26 @@ const ProductDetail = ({ addToCart }) => {
 
   useEffect(() => {
     const fetchProduct = async () => {
+      // Hiển thị thông báo loading
+      const swalInstance = Swal.fire({
+        title: "Đang tải sản phẩm...",
+        width: 600,
+        padding: "3em",
+        color: "#716add",
+        background: "#fff",
+        backdrop: `
+          rgba(0,0,123,0.4)
+          url("/assets/loading.png")
+          left top
+          no-repeat
+        `,
+        allowOutsideClick: false,
+        showConfirmButton: false,
+        willOpen: () => {
+          Swal.showLoading();
+        },
+      });
+
       try {
         const response = await fetch(
           `https://localhost:7022/minimal/api/get-product-detail?id=${productId}`
@@ -20,8 +41,13 @@ const ProductDetail = ({ addToCart }) => {
 
         const data = await response.json();
         setProduct(data);
+
+        // Đóng thông báo khi tải xong
+        swalInstance.close();
       } catch (err) {
         setError(err.message || "Đã xảy ra lỗi. Vui lòng thử lại sau.");
+        // Đóng thông báo khi có lỗi
+        swalInstance.close();
       }
     };
 
@@ -33,7 +59,7 @@ const ProductDetail = ({ addToCart }) => {
   }
 
   if (!product) {
-    return <div>Đang tải...</div>;
+    return null; // Không cần hiển thị gì thêm khi đang tải
   }
 
   return (
@@ -103,7 +129,12 @@ const ProductDetail = ({ addToCart }) => {
             className="btn btn-success w-100"
             onClick={() => {
               addToCart({ ...product, quantity });
-              alert("Đã thêm vào giỏ hàng!");
+              Swal.fire({
+                icon: "success",
+                title: "Thành công!",
+                text: "Sản phẩm đã được thêm vào giỏ hàng.",
+                confirmButtonText: "Đóng",
+              });
             }}
           >
             Thêm vào giỏ hàng

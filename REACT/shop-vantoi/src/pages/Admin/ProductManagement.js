@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import Swal from "sweetalert2";
 
 const ProductManagement = () => {
   const [products, setProducts] = useState([]);
@@ -34,10 +35,21 @@ const ProductManagement = () => {
   };
 
   // Xóa sản phẩm
-  const handleDelete = async (id) => {
-    if (!window.confirm("Bạn có chắc muốn xóa sản phẩm này?")) return;
-
+  const handleDelete = async (id, productName) => {
     try {
+      // Hiển thị thông báo xác nhận
+      const result = await Swal.fire({
+        title: "Bạn có chắc muốn xóa sản phẩm?",
+        text: `Sản phẩm: ${productName}`,
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Đồng ý",
+        cancelButtonText: "Hủy",
+      });
+
+      if (!result.isConfirmed) return;
+
+      // Thực hiện xóa sản phẩm
       const response = await fetch(
         `https://localhost:7022/minimal/api/delete-product?id=${id}`,
         {
@@ -53,24 +65,35 @@ const ProductManagement = () => {
         throw new Error(errorText || "Không thể xóa sản phẩm.");
       }
 
-      const result = await response.json();
-      if (result.isSuccess) {
+      const resultData = await response.json();
+      if (resultData.isSuccess) {
+        // Cập nhật danh sách sản phẩm
         setProducts(products.filter((product) => product.id !== id));
-        setSuccessMessage("Xóa sản phẩm thành công!");
-        setTimeout(() => {
-          setSuccessMessage("");
-        }, 3000);
+
+        // Hiển thị thông báo thành công
+        await Swal.fire({
+          title: "Thành công!",
+          text: "Sản phẩm đã được xóa.",
+          icon: "success",
+          confirmButtonText: "OK",
+        });
       } else {
-        throw new Error(result.message || "Không thể xóa sản phẩm.");
+        throw new Error(resultData.message || "Không thể xóa sản phẩm.");
       }
     } catch (err) {
-      setError(`Lỗi: ${err.message}`);
+      // Hiển thị thông báo lỗi
+      await Swal.fire({
+        title: "Lỗi!",
+        text: `Lỗi: ${err.message}`,
+        icon: "error",
+        confirmButtonText: "OK",
+      });
     }
   };
 
   return (
     <div className="container my-4">
-      <motion.h2
+      <motion.h1
         className="text-center mb-4"
         initial={{ opacity: 0, scale: 0.5 }}
         animate={{ opacity: 1, scale: 1 }}
@@ -88,7 +111,7 @@ const ProductManagement = () => {
         }}
       >
         Quản lý sản phẩm
-      </motion.h2>
+      </motion.h1>
 
       {error && <div className="alert alert-danger">{error}</div>}
       {successMessage && (

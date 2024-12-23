@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import Swal from "sweetalert2";
 
 const UpdateCategory = () => {
   const { id } = useParams();
@@ -86,7 +87,12 @@ const UpdateCategory = () => {
       const result = await response.json();
 
       if (response.ok && result.isSuccess) {
-        setMessage("Category updated successfully!");
+        Swal.fire({
+          title: "Chỉnh sửa danh mục thành công!",
+          text: result.message || "Chào mừng bạn!",
+          icon: "success",
+          confirmButtonText: "OK",
+        });
         setTimeout(() => {
           navigate("/admin/category");
         }, 1500);
@@ -94,7 +100,12 @@ const UpdateCategory = () => {
         setError("Error updating category");
       }
     } catch (err) {
-      setError("Error updating category");
+      Swal.fire({
+        title: "Chỉnh sửa danh mục thất bại!",
+        text: err.message || "Chào mừng bạn!",
+        icon: "error",
+        confirmButtonText: "OK",
+      });
     } finally {
       setLoading(false);
     }

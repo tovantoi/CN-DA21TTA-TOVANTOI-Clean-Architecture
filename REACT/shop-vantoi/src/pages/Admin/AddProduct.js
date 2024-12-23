@@ -62,14 +62,14 @@ const AddProduct = () => {
     try {
       // Thêm thông báo "Đang gửi yêu cầu..." trong frontend
       Swal.fire({
-        title: "Đang gửi yêu cầu...",
+        title: "Đang lấy thông tin sản phẩm...",
         width: 600,
         padding: "3em",
         color: "#716add",
-        background: "#fff url(/images/trees.png)",
+        background: "#fff",
         backdrop: `
           rgba(0,0,123,0.4)
-          url("/images/nyan-cat.gif")
+          url("/assets/loading.png")
           left top
           no-repeat
         `,

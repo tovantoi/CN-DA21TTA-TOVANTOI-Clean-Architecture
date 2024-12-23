@@ -5,6 +5,7 @@ import { Navbar, Nav } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import Swal from "sweetalert2";
+import { FaHome, FaListAlt, FaBoxOpen, FaUserFriends, FaKey, FaSignOutAlt } from "react-icons/fa"; // Import icons
 
 const AdminSidebar = () => {
   const navigate = useNavigate();
@@ -59,7 +60,7 @@ const AdminSidebar = () => {
   };
 
   const showConfirmDialog = (e) => {
-    e.preventDefault(); // Ngăn chặn hành động mặc định của thẻ <a>
+    e.preventDefault();
 
     Swal.fire({
       title: "Bạn có chắc muốn đăng xuất?",
@@ -70,7 +71,7 @@ const AdminSidebar = () => {
       cancelButtonText: "Hủy",
     }).then((result) => {
       if (result.isConfirmed) {
-        handleLogout(); // Gọi hàm đăng xuất khi người dùng xác nhận
+        handleLogout();
       }
     });
   };
@@ -86,7 +87,7 @@ const AdminSidebar = () => {
               isActive ? "nav-link active" : "nav-link"
             }
           >
-            Trang chủ
+            <FaHome style={{ marginRight: "8px" }} />TRANG CHỦ
           </NavLink>
         </li>
         <li className="nav-item">
@@ -96,7 +97,7 @@ const AdminSidebar = () => {
               isActive ? "nav-link active" : "nav-link"
             }
           >
-            Quản lí danh mục
+           <FaListAlt style={{ marginRight: "8px" }} />QUẢN LÍ DANH MỤC
           </NavLink>
         </li>
         <li className="nav-item">
@@ -106,7 +107,7 @@ const AdminSidebar = () => {
               isActive ? "nav-link active" : "nav-link"
             }
           >
-            Quản lí sản phẩm
+             <FaBoxOpen style={{ marginRight: "8px" }} />QUẢN LÍ SẢN PHẨM
           </NavLink>
         </li>
         <li className="nav-item">
@@ -116,7 +117,7 @@ const AdminSidebar = () => {
               isActive ? "nav-link active" : "nav-link"
             }
           >
-            Quản lí khách hàng
+             <FaUserFriends style={{ marginRight: "8px" }} />QUẢN LÍ KHÁCH HÀNG
           </NavLink>
         </li>
         <li className="nav-item">
@@ -126,12 +127,12 @@ const AdminSidebar = () => {
               isActive ? "nav-link active" : "nav-link"
             }
           >
-            Thay đổi mật khẩu
+             <FaKey style={{ marginRight: "8px" }} />THAY ĐỔI MẬT KHẨU
           </NavLink>
         </li>
         <li className="nav-item">
           <a href="/logout" className="nav-link" onClick={showConfirmDialog}>
-            <b>Đăng xuất</b>
+          <FaSignOutAlt style={{ marginRight: "8px" }} /><b>ĐĂNG XUẤT</b>
           </a>
         </li>
       </ul>

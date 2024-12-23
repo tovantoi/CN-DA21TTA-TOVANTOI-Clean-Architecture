@@ -1,16 +1,35 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
 
 const CategorySearch = () => {
   const [categories, setCategories] = useState([]);
-  const [filteredProducts, setFilteredProducts] = useState([]); 
+  const [filteredProducts, setFilteredProducts] = useState([]);
   const [error, setError] = useState("");
-  const [pageNumber, setPageNumber] = useState(1); 
-  const [pageSize, setPageSize] = useState(8); 
+  const [pageNumber, setPageNumber] = useState(1);
+  const [pageSize, setPageSize] = useState(8);
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchCategories = async () => {
+      const swalInstance = Swal.fire({
+        title: "Đang tải sản phẩm...",
+        width: 600,
+        padding: "3em",
+        color: "#716add",
+        background: "#fff",
+        backdrop: `
+                rgba(0,0,123,0.4)
+                url("/assets/loading.png")
+                left top
+                no-repeat
+              `,
+        allowOutsideClick: false,
+        showConfirmButton: false,
+        willOpen: () => {
+          Swal.showLoading();
+        },
+      });
       try {
         const response = await fetch(
           "https://localhost:7022/minimal/api/get-categories"
@@ -18,8 +37,10 @@ const CategorySearch = () => {
         if (!response.ok) throw new Error("Không thể tải danh mục.");
         const data = await response.json();
         setCategories(data);
+        swalInstance.close();
       } catch (err) {
         setError(err.message || "Đã xảy ra lỗi khi tải danh mục.");
+        swalInstance.close();
       }
     };
 
@@ -43,10 +64,15 @@ const CategorySearch = () => {
       }
 
       const data = await response.json();
-      setFilteredProducts(data.data || []); 
-      setError(""); 
+      setFilteredProducts(data.data || []);
+      setError("");
     } catch (err) {
-      setError(err.message || "Đã xảy ra lỗi khi tải sản phẩm.");
+      Swal.fire({
+        title: "Đã có lỗi xảy ra khi tải sản phẩm",
+        text: "Đã xảy ra lỗi. Vui lòng thử lại sau.",
+        icon: "error",
+        confirmButtonText: "OK",
+      });
     }
   };
 
@@ -86,7 +112,7 @@ const CategorySearch = () => {
                 className="product-item card m-2"
                 key={product.id}
                 style={{ width: "200px", cursor: "pointer" }}
-                onClick={() => navigate(`/product/${product.id}`)} 
+                onClick={() => navigate(`/product/${product.id}`)}
               >
                 <img
                   src={

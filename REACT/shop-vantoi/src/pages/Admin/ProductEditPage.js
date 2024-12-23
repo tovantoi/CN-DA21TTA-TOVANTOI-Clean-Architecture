@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import Swal from "sweetalert2";
 
 const ProductEditPage = () => {
   const { productId } = useParams(); // Lấy productId từ URL
@@ -58,18 +59,31 @@ const ProductEditPage = () => {
           body: JSON.stringify(product),
         }
       );
-
+      const result = await response.json();
       if (!response.ok) {
-        const result = await response.json();
-        throw new Error(result.message || "Cập nhật sản phẩm thất bại.");
+        Swal.fire({
+          title: "Cập nhật sản phẩm thất bại",
+          text: result.message || "Vui lòng kiểm tra lại thông tin sản phẩm.",
+          icon: "error",
+          confirmButtonText: "Thử lại",
+        });
       }
-
-      alert("Cập nhật sản phẩm thành công!");
+      Swal.fire({
+        title: "Cập nhật sản phẩm thành công!",
+        text: result.message || "Chào mừng bạn!",
+        icon: "success",
+        confirmButtonText: "OK",
+      });
       setTimeout(() => {
         navigate("/admin/products");
       }, 1500);
     } catch (err) {
-      setError(err.message);
+      Swal.fire({
+        title: "Lỗi kết nối",
+        text: "Đã xảy ra lỗi. Vui lòng thử lại sau.",
+        icon: "error",
+        confirmButtonText: "OK",
+      });
     }
   };
 

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import Swal from "sweetalert2";
 
 const MyAccountPage = () => {
   const [user, setUser] = useState(null);
@@ -11,6 +12,19 @@ const MyAccountPage = () => {
 
   useEffect(() => {
     const fetchCustomerById = async () => {
+      const swalInstance = Swal.fire({
+        title: "Đang tải thông tin tài khoản...",
+        width: 600,
+        padding: "3em",
+        color: "#716add",
+        background: "#fff",
+        backdrop: `
+                      rgba(0,0,123,0.4)
+                      url("/assets/loading.png")
+                      left top
+                      no-repeat
+                    `,
+      });
       try {
         const userData = JSON.parse(localStorage.getItem("user"));
         if (!userData || !userData.id) {
@@ -38,6 +52,7 @@ const MyAccountPage = () => {
 
         // Gán thông tin khách hàng vào state
         setUser(data.data);
+        swalInstance.close();
         setFormData({
           name: data.data.firstName || "",
           email: data.data.email || "",
@@ -45,6 +60,7 @@ const MyAccountPage = () => {
       } catch (err) {
         console.error("Error fetching customer by ID:", err);
         setError(err.message || "Đã xảy ra lỗi. Vui lòng thử lại sau.");
+        swalInstance.close();
       }
     };
 
@@ -232,7 +248,8 @@ const MyAccountPage = () => {
             </div>
             <button className="btn btn-success" onClick={handleSave}>
               Lưu
-            </button><br></br>
+            </button>
+            <br></br>
             <button
               className="btn btn-secondary"
               onClick={() => setIsEditing(false)}

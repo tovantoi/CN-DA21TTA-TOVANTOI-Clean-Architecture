@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import Swal from "sweetalert2";
 
 const CustomerManagement = () => {
   const [customers, setCustomers] = useState([]);
@@ -25,9 +26,18 @@ const CustomerManagement = () => {
     }
   };
 
-  const handleDelete = async (id) => {
-    if (window.confirm("Bạn có chắc chắn muốn xoá khách hàng này?")) {
-      try {
+  const handleDelete = async (id, customerName) => {
+    try {
+      const result = await Swal.fire({
+        title: "Bạn có chắc muốn xóa khách hàng?",
+        text: `Khách hàng: ${customerName}`,
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Đồng ý",
+        cancelButtonText: "Hủy",
+      });
+
+      if (result.isConfirmed) {
         const response = await fetch(
           `https://localhost:7022/minimal/api/delete-customer?id=${id}`,
           {
@@ -35,39 +45,48 @@ const CustomerManagement = () => {
           }
         );
 
-        if (response.ok) {
-          setCustomers(customers.filter((customer) => customer.id !== id));
-          alert("Khách hàng đã được xoá.");
-        } else {
-          alert("Không thể xoá khách hàng.");
-        }
-      } catch (err) {
-        alert("Đã xảy ra lỗi khi xoá khách hàng.");
+        if (!response.ok) throw new Error("Không thể xóa khách hàng.");
+
+        setCustomers(customers.filter((customer) => customer.id !== id));
+
+        await Swal.fire({
+          title: "Thành công!",
+          text: "Khách hàng đã được xóa.",
+          icon: "success",
+          confirmButtonText: "OK",
+        });
       }
+    } catch (err) {
+      await Swal.fire({
+        title: "Lỗi!",
+        text: err.message || "Đã xảy ra lỗi khi xóa khách hàng.",
+        icon: "error",
+        confirmButtonText: "OK",
+      });
     }
   };
 
   return (
     <div className="container my-4">
-      <motion.h2
-              className="text-center mb-4"
-              initial={{ opacity: 0, scale: 0.5 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{
-                duration: 1,
-                repeat: Infinity, // Lặp lại vô hạn
-                repeatType: "reverse", // Lặp lại theo chiều ngược lại
-                repeatDelay: 2, // Đợi 4 giây (tổng thời gian sẽ là 5 giây vì thời gian animation là 1 giây)
-              }}
-              style={{
-                background: "linear-gradient(45deg, #ff6ec7, #ffy900)",
-                color: "red",
-                WebkitBackgroundClip: "text",
-                backgroundClip: "text",
-              }}
-            >
-              Quản lý khách hàng
-            </motion.h2>
+      <motion.h1
+        className="text-center mb-4"
+        initial={{ opacity: 0, scale: 0.5 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{
+          duration: 1,
+          repeat: Infinity, // Lặp lại vô hạn
+          repeatType: "reverse", // Lặp lại theo chiều ngược lại
+          repeatDelay: 2, // Đợi 4 giây (tổng thời gian sẽ là 5 giây vì thời gian animation là 1 giây)
+        }}
+        style={{
+          background: "linear-gradient(45deg, #ff6ec7, #ffy900)",
+          color: "red",
+          WebkitBackgroundClip: "text",
+          backgroundClip: "text",
+        }}
+      >
+        Quản lý khách hàng
+      </motion.h1>
       {error && <div className="alert alert-danger">{error}</div>}
       <table className="table table-striped">
         <thead>
@@ -97,7 +116,8 @@ const CustomerManagement = () => {
                 <td>
                   <img
                     src={
-                      customer.avatarImagePath && customer.avatarImagePath !== "string"
+                      customer.avatarImagePath &&
+                      customer.avatarImagePath !== "string"
                         ? `https://localhost:7241/${customer.avatarImagePath}`
                         : "https://via.placeholder.com/400"
                     }
