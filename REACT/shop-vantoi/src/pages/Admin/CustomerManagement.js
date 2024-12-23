@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { motion } from "framer-motion";
 
 const CustomerManagement = () => {
   const [customers, setCustomers] = useState([]);
@@ -48,7 +49,25 @@ const CustomerManagement = () => {
 
   return (
     <div className="container my-4">
-      <h2 className="text-center">Quản lý khách hàng</h2>
+      <motion.h2
+              className="text-center mb-4"
+              initial={{ opacity: 0, scale: 0.5 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{
+                duration: 1,
+                repeat: Infinity, // Lặp lại vô hạn
+                repeatType: "reverse", // Lặp lại theo chiều ngược lại
+                repeatDelay: 2, // Đợi 4 giây (tổng thời gian sẽ là 5 giây vì thời gian animation là 1 giây)
+              }}
+              style={{
+                background: "linear-gradient(45deg, #ff6ec7, #ffy900)",
+                color: "red",
+                WebkitBackgroundClip: "text",
+                backgroundClip: "text",
+              }}
+            >
+              Quản lý khách hàng
+            </motion.h2>
       {error && <div className="alert alert-danger">{error}</div>}
       <table className="table table-striped">
         <thead>

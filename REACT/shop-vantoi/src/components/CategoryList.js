@@ -6,7 +6,7 @@ const CategorySearch = () => {
   const [filteredProducts, setFilteredProducts] = useState([]); 
   const [error, setError] = useState("");
   const [pageNumber, setPageNumber] = useState(1); 
-  const [pageSize, setPageSize] = useState(6); 
+  const [pageSize, setPageSize] = useState(8); 
   const navigate = useNavigate();
 
   useEffect(() => {

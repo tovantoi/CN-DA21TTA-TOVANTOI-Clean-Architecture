@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom"; // Import useNavigate
+import { useNavigate } from "react-router-dom";
 
 const RegisterPage = () => {
-  const [step, setStep] = useState(1); // Step 1: Register, Step 2: OTP Verification
+  const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -10,11 +10,11 @@ const RegisterPage = () => {
     password: "",
     confirmPassword: "",
   });
-  const [otp, setOtp] = useState(""); // OTP input
+  const [otp, setOtp] = useState("");
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
 
-  const navigate = useNavigate(); // Hook for navigation
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData({
@@ -23,10 +23,8 @@ const RegisterPage = () => {
     });
   };
 
-  // Handle Register
   const handleRegister = async (e) => {
     e.preventDefault();
-
     try {
       const response = await fetch(
         "https://localhost:7022/minimal/api/register-customer",
@@ -38,36 +36,24 @@ const RegisterPage = () => {
           body: JSON.stringify(formData),
         }
       );
-
       const data = await response.json();
-
       if (response.ok) {
         setMessage(
-          data.message ||
-            "Đăng ký thành công. Vui lòng kiểm tra email để nhận mã OTP."
+          data.message || "Đăng ký thành công. Vui lòng kiểm tra email."
         );
         setError("");
-        setStep(2); // Chuyển sang bước xác thực OTP
+        setStep(2);
       } else {
-        setError(data.message || "Đăng ký thất bại. Vui lòng kiểm tra lại.");
+        setError(data.message || "Đăng ký thất bại.");
         setMessage("");
       }
     } catch (err) {
-      console.error(err);
-      setError("Đã xảy ra lỗi. Vui lòng thử lại sau.");
-      setMessage("");
+      setError("Đã xảy ra lỗi. Vui lòng thử lại.");
     }
   };
 
-  // Handle OTP Verification
   const handleVerifyOtp = async (e) => {
     e.preventDefault();
-
-    if (!otp || otp.length !== 6) {
-      setError("Mã OTP không hợp lệ. Vui lòng nhập lại mã OTP.");
-      return;
-    }
-
     try {
       const response = await fetch(
         `https://localhost:7022/minimal/api/authen-customer?email=${formData.email}`,
@@ -79,40 +65,32 @@ const RegisterPage = () => {
           body: JSON.stringify({ otp }),
         }
       );
-
       const data = await response.json();
-
       if (response.ok) {
         setMessage(data.message || "Xác thực OTP thành công!");
-        setError("");
-
-        // Chuyển hướng về trang đăng nhập sau 2 giây
-        setTimeout(() => {
-          navigate("/login");
-        }, 1000);
+        setTimeout(() => navigate("/login"), 1000);
       } else {
-        setError(data.message || "Xác thực OTP thất bại. Vui lòng thử lại.");
-        setMessage("");
+        setError(data.message || "Xác thực OTP thất bại.");
       }
     } catch (err) {
-      console.error(err);
-      setError("Đã xảy ra lỗi. Vui lòng thử lại sau.");
-      setMessage("");
+      setError("Đã xảy ra lỗi. Vui lòng thử lại.");
     }
   };
 
   return (
-    <div className="register-page d-flex justify-content-center align-items-center">
-      <div className="register-form shadow p-4 rounded">
-        {/* Hiển thị thông báo thành công hoặc lỗi */}
+    <div className="register-page d-flex justify-content-center align-items-center vh-100 bg-light">
+      <div
+        className="register-form shadow-lg p-5 rounded bg-white w-100"
+        style={{ maxWidth: "400px" }}
+      >
         {message && <div className="alert alert-success">{message}</div>}
         {error && <div className="alert alert-danger">{error}</div>}
 
         {step === 1 && (
           <form onSubmit={handleRegister}>
-            <h2 className="text-center mb-4">Tạo tài khoản</h2>
+            <h2 className="text-center mb-4 text-primary">Đăng kí</h2>
             <div className="mb-3">
-              <label>Họ</label>
+              <label className="form-label">Họ</label>
               <input
                 type="text"
                 name="firstName"
@@ -123,7 +101,7 @@ const RegisterPage = () => {
               />
             </div>
             <div className="mb-3">
-              <label>Tên</label>
+              <label className="form-label">Tên</label>
               <input
                 type="text"
                 name="lastName"
@@ -134,7 +112,7 @@ const RegisterPage = () => {
               />
             </div>
             <div className="mb-3">
-              <label>Email</label>
+              <label className="form-label">Email</label>
               <input
                 type="email"
                 name="email"
@@ -145,7 +123,7 @@ const RegisterPage = () => {
               />
             </div>
             <div className="mb-3">
-              <label>Password</label>
+              <label className="form-label">Mật khẩu</label>
               <input
                 type="password"
                 name="password"
@@ -156,7 +134,7 @@ const RegisterPage = () => {
               />
             </div>
             <div className="mb-3">
-              <label>Confirm Password</label>
+              <label className="form-label">Xác nhận mật khẩu</label>
               <input
                 type="password"
                 name="confirmPassword"
@@ -166,6 +144,14 @@ const RegisterPage = () => {
                 required
               />
             </div>
+            <div className="card-footer text-center mt-3">
+              <small className="text-muted">
+                Bạn đã có tài khoản?{" "}
+                <a href="/login" className="text-decoration-none">
+                  Đăng nhập
+                </a>
+              </small>
+            </div>
             <button type="submit" className="btn btn-primary w-100">
               Đăng ký
             </button>
@@ -174,9 +160,9 @@ const RegisterPage = () => {
 
         {step === 2 && (
           <form onSubmit={handleVerifyOtp}>
-            <h2 className="text-center mb-4">Xác thực OTP</h2>
+            <h2 className="text-center mb-4 text-primary">Xác Thực OTP</h2>
             <div className="mb-3">
-              <label>Nhập mã OTP</label>
+              <label className="form-label">Nhập mã OTP</label>
               <input
                 type="text"
                 className="form-control"

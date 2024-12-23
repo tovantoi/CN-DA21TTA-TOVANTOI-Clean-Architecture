@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
+import Swal from "sweetalert2";
 
 const AddProduct = () => {
   const [formData, setFormData] = useState({
@@ -60,8 +61,19 @@ const AddProduct = () => {
 
     try {
       // Thêm thông báo "Đang gửi yêu cầu..." trong frontend
-      setMessage("Đang gửi yêu cầu...");
-
+      Swal.fire({
+        title: "Đang gửi yêu cầu...",
+        width: 600,
+        padding: "3em",
+        color: "#716add",
+        background: "#fff url(/images/trees.png)",
+        backdrop: `
+          rgba(0,0,123,0.4)
+          url("/images/nyan-cat.gif")
+          left top
+          no-repeat
+        `,
+      });
       const response = await fetch(
         "https://localhost:7022/minimal/api/create-product",
         {
@@ -76,7 +88,12 @@ const AddProduct = () => {
       const result = await response.json();
       if (response.ok) {
         // Hiển thị thông báo thành công
-        setMessage("Sản phẩm đã được thêm thành công.");
+        Swal.fire({
+          title: "Thêm sản phẩm thành công!",
+          text: result.message || "Đã thêm sản phẩm!",
+          icon: "success",
+          confirmButtonText: "OK",
+        });
         setErrors([]); // Xóa lỗi nếu có
 
         // Sau khi thông báo thành công, reset form và xóa thông báo sau 3 giây
@@ -105,12 +122,21 @@ const AddProduct = () => {
         }, 5000); // Chờ 3 giây trước khi reset form và xóa thông báo
       } else {
         // Hiển thị thông báo lỗi
-        setMessage("Thêm sản phẩm thất bại.");
-        setErrors(result.errors || []); // Đảm bảo backend vẫn có thể trả về lỗi nếu cần
+        Swal.fire({
+          title: "Thêm sản phẩm thất bại",
+          text: result.message || "Vui lòng kiểm tra lại thông tin sản phẩm.",
+          icon: "error",
+          confirmButtonText: "Thử lại",
+        });
+        setErrors(result.errors || []);
       }
     } catch (error) {
-      // Hiển thị thông báo lỗi khi có sự cố trong việc gọi API
-      setMessage("Đã xảy ra lỗi khi gọi API.");
+      Swal.fire({
+        title: "Đã xảy ra lỗi khi gọi Api",
+        text: error.message || "Vui lòng kiểm tra lại server.",
+        icon: "error",
+        confirmButtonText: "Thử lại",
+      });
       setErrors([]);
       console.error(error);
     }

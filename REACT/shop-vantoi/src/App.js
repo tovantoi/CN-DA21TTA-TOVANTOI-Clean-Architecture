@@ -10,6 +10,7 @@ import Header from "./components/Header";
 import Footer from "./components/Footer";
 import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
+import BlogPage from "./pages/BlogPage";
 import RegisterPage from "./pages/RegisterPage";
 import MyAccountPage from "./pages/MyAccountPage";
 import ProductPage from "./pages/ProductPage";
@@ -17,6 +18,8 @@ import ContactPage from "./pages/ContactPage";
 import CheckoutPage from "./pages/CheckoutPage";
 import SearchResultsPage from "./pages/SearchResultsPage";
 import ProductDetail from "./components/ProductDetail";
+import Phukien from "./components/Phukien";
+import Logout from "./components/Logout";
 import CartPage from "./pages/CartPage";
 import Dashboard from "./pages/Admin/Dashboard";
 import ProductManagement from "./pages/Admin/ProductManagement";
@@ -29,6 +32,7 @@ import ProductEditPage from "./pages/Admin/ProductEditPage";
 import RequestOtpPage from "./pages/RequestOtpPage";
 import ChangePasswordPage from "./pages/ChangePasswordPage";
 import AdminLayout from "./components/AdminLayout";
+import NotFoundPage from "./components/NotFoundPage";
 import {
   Chart,
   CategoryScale,
@@ -59,12 +63,16 @@ const AppContent = ({ cart, setCart, emailForOtp, setEmailForOtp }) => {
       {!isAdminRoute && <Header cart={cart} />}{" "}
       {/* Hiển thị Header nếu không phải admin */}
       <Routes>
+        <Route path="*" element={<NotFoundPage />} />
         <Route path="/" element={<HomePage />} />
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/logout" element={<Logout />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/my-account" element={<MyAccountPage />} />
         <Route path="/products" element={<ProductPage />} />
         <Route path="/contact" element={<ContactPage />} />
+        <Route path="/blogpage" element={<BlogPage />} />
+        <Route path="/phukien" element={<Phukien />} />
         <Route path="/search-results" element={<SearchResultsPage />} />
         <Route path="/checkout" element={<CheckoutPage cart={cart} />} />
         <Route

@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Line, Bar, Doughnut } from "react-chartjs-2";
+import { motion } from "framer-motion";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -27,6 +28,12 @@ ChartJS.register(
 );
 
 const Dashboard = () => {
+  const getRandomColor = () => {
+    const colors = ["#ff6ec7", "#ff9000", "#00ff90", "#0090ff", "#ff00d8"];
+    return colors[Math.floor(Math.random() * colors.length)];
+  };
+
+  const [color, setColor] = useState(getRandomColor());
   const lineChartData = {
     labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
     datasets: [
@@ -70,9 +77,35 @@ const Dashboard = () => {
     ],
   };
 
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setColor(getRandomColor()); // Cập nhật màu sắc sau mỗi 5 giây
+    }, 5000); // Thời gian đổi màu là 5 giây
+
+    return () => clearInterval(interval); // Dọn dẹp khi component bị hủy
+  }, []);
   return (
     <div className="dashboard">
-      <h1 className="dashboard-title">CÁC CHỈ TIÊU KINH DOANH</h1>
+      <motion.h1
+        className="dashboard-title"
+        initial={{ opacity: 0, scale: 0.5 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{
+          duration: 1,
+          repeat: Infinity, // Lặp lại vô hạn
+          repeatType: "reverse", // Lặp lại theo chiều ngược lại
+          repeatDelay: 2, // Thời gian chờ trước khi lặp lại
+        }}
+        style={{
+          //background: `linear-gradient(45deg, ${color}, #ff9000)`,
+          fontSize: 50,
+          color: "red",
+          WebkitBackgroundClip: "text",
+          backgroundClip: "text",
+        }}
+      >
+        <p> CHỈ TIÊU KINH DOANH</p>
+      </motion.h1>
       <div className="grid-container">
         {/* Thông tin cơ bản */}
         <div className="info-card">
@@ -83,17 +116,17 @@ const Dashboard = () => {
         <div className="info-card">
           Doanh thu KH mới
           <br />
-          <span className="value">$59,100</span>
+          <span className="value">5.9100-VNĐ</span>
         </div>
         <div className="info-card">
           Chi phí
           <br />
-          <span className="value">$26,400</span>
+          <span className="value">26.4000-VNĐ</span>
         </div>
         <div className="info-card">
           Lợi nhuận
           <br />
-          <span className="value">$49.55</span>
+          <span className="value">30.5500-VNĐ</span>
         </div>
 
         {/* Biểu đồ dạng đường */}
@@ -125,10 +158,10 @@ const Dashboard = () => {
 
         {/* Danh sách Sales Rep */}
         <div className="sales-rep">
-          <h3>Sales Rep</h3>
-          <div className="sales-card">Anna Krüger: $19,200</div>
-          <div className="sales-card">Tobi Schmidt: $22,600</div>
-          <div className="sales-card">Lisa Fisher: $13,100</div>
+          <h3>Đại diện bán hàng</h3>
+          <div className="sales-card">Văn Tới: 3.200-VNĐ</div>
+          <div className="sales-card">Quốc Ninh: 2.600-VNĐ</div>
+          <div className="sales-card">Bá Hiếu: 2.100-VNĐ</div>
         </div>
       </div>
     </div>

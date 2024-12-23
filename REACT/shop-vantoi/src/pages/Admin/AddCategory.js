@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
 
 const AddCategory = () => {
   const [formData, setFormData] = useState({
@@ -72,12 +73,22 @@ const AddCategory = () => {
         throw new Error(result.message || "Không thể thêm danh mục.");
       }
 
-      setSuccessMessage(result.message || "Thêm danh mục thành công!");
+      Swal.fire({
+        title: "Thêm danh mục thành công!",
+        text: result.message || "Đã thêm danh mục!",
+        icon: "success",
+        confirmButtonText: "OK",
+      });
       setTimeout(() => {
         navigate("/admin/category");
       }, 1000);
     } catch (err) {
-      setError(err.message || "Đã xảy ra lỗi khi thêm danh mục.");
+      Swal.fire({
+        title: "Thêm danh mục thất bại",
+        text: err.message || "Vui lòng kiểm tra lại thông tin danh mục.",
+        icon: "error",
+        confirmButtonText: "Thử lại",
+      });
     }
   };
 
@@ -137,7 +148,8 @@ const AddCategory = () => {
             onChange={handleImageUpload}
             required
           />
-        </div><br></br>
+        </div>
+        <br></br>
         <div className="form-group">
           <label htmlFor="isActive">Kích hoạt</label>
           <input

@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
+import Swal from "sweetalert2";
 
 const Header = ({ cart }) => {
   const navigate = useNavigate();
@@ -60,11 +62,71 @@ const Header = ({ cart }) => {
     }
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem("user");
-    setUser(null);
-    alert("Đăng xuất thành công!");
-    navigate("/login");
+  const handleLogout = async () => {
+    try {
+      // Lấy thông tin vai trò từ localStorage
+      const user = JSON.parse(localStorage.getItem("user"));
+      const role = user?.role;
+
+      const response = await fetch(
+        "https://localhost:7022/minimal/api/customer-logout",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ role }), // Gửi vai trò cho API
+        }
+      );
+
+      const data = await response.json();
+
+      if (response.ok) {
+        Swal.fire({
+          title: "Đăng xuất thành công!",
+          text: data.message || "Hẹn gặp lại!",
+          icon: "success",
+          confirmButtonText: "OK",
+        });
+        // Xóa thông tin người dùng khỏi localStorage
+        localStorage.removeItem("user");
+
+        // Điều hướng về trang đăng nhập
+        navigate("/login");
+      } else {
+        Swal.fire({
+          title: "Đăng xuất thất bại",
+          text: data.message || "Vui lòng kiểm tra lại thông tin đăng nhập.",
+          icon: "error",
+          confirmButtonText: "Thử lại",
+        });
+      }
+    } catch (err) {
+      console.error("Error during logout:", err);
+      Swal.fire({
+        title: "Lỗi kết nối",
+        text: "Đã xảy ra lỗi. Vui lòng thử lại sau.",
+        icon: "error",
+        confirmButtonText: "OK",
+      });
+    }
+  };
+
+  const showConfirmDialog = (e) => {
+    e.preventDefault(); // Ngăn chặn hành động mặc định của thẻ <a>
+
+    Swal.fire({
+      title: "Bạn có chắc muốn đăng xuất?",
+      text: "Bạn sẽ bị đăng xuất khỏi tài khoản hiện tại.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Đăng xuất",
+      cancelButtonText: "Hủy",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        handleLogout(); // Gọi hàm đăng xuất khi người dùng xác nhận
+      }
+    });
   };
 
   return (
@@ -75,34 +137,64 @@ const Header = ({ cart }) => {
             src="/assets/logoo.png"
             alt="Logo"
             className="me-2"
-            style={{ height: "70px" }}
+            style={{
+              height: "80px",
+              borderRadius: "5px",
+              borderTopRightRadius: "50px",
+              paddingRight: "10px",
+            }}
           />
           <Link to="/" className="text-decoration-none fs-3">
-            <span className="logo-text">
+            <motion.span
+              className="logo-text"
+              initial={{ opacity: 0, scale: 0 }}
+              animate={{
+                opacity: 1, // Logo sẽ xuất hiện rõ ràng
+                scale: 1, // Phóng to logo khi xuất hiện
+                rotate: [0, 15, -15, 0], // Thêm hiệu ứng quay nhẹ
+                x: [15, 10, -10, -15], // Thêm hiệu ứng lắc lư (xây qua lại)
+              }}
+              transition={{
+                duration: 1,
+                delay: 0, // Delay 1 giây trước khi hiệu ứng bắt đầu
+                repeat: Infinity, // Lặp lại vô hạn
+                repeatType: "reverse", // Lặp lại theo chiều ngược lại
+                repeatDelay: 5, // Thời gian nghỉ giữa các lần lặp (10 giây)
+                ease: "easeInOut",
+              }}
+              style={{
+                display: "inline-block",
+                fontWeight: "bold",
+                background: "linear-gradient(45deg, #ff6ec7, #ff9000)", // Gradient cho chữ
+                WebkitBackgroundClip: "text",
+                backgroundClip: "text",
+                textTransform: "uppercase",
+              }}
+            >
               SHOP <b>VANTOI</b>
-            </span>
+            </motion.span>
           </Link>
         </div>
 
         <nav>
           <ul className="nav">
             <li className="nav-item">
-              <a href="/products" className="nav-link text-dark">
-                <b> Hàng mới</b>
-              </a>
-            </li>
-            <li className="nav-item">
-              <a href="/products" className="nav-link text-dark">
+              <a href="/products" className="nav-link">
                 <b>Sản phẩm</b>
               </a>
             </li>
             <li className="nav-item">
-              <a href="#phukien" className="nav-link text-dark">
+              <a href="/phukien" className="nav-link">
                 <b>Phụ kiện</b>
               </a>
             </li>
             <li className="nav-item">
-              <a href="/contact" className="nav-link text-dark">
+              <a href="/blogpage" className="nav-link">
+                <b>Blog</b>
+              </a>
+            </li>
+            <li className="nav-item">
+              <a href="/contact" className="nav-link">
                 <b>Liên hệ</b>
               </a>
             </li>
@@ -146,12 +238,13 @@ const Header = ({ cart }) => {
                     </Link>
                   </li>
                   <li>
-                    <button
-                      onClick={handleLogout}
-                      className="dropdown-item btn btn-link text-start"
+                    <a
+                      href="/logout"
+                      className="nav-link"
+                      onClick={showConfirmDialog}
                     >
-                      Đăng xuất
-                    </button>
+                      <b>Đăng xuất</b>
+                    </a>
                   </li>
                 </>
               ) : (
@@ -163,7 +256,7 @@ const Header = ({ cart }) => {
                   </li>
                   <li>
                     <Link to="/register" className="dropdown-item">
-                      Tạo tài khoản
+                      Đăng kí
                     </Link>
                   </li>
                 </>

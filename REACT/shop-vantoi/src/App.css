@@ -304,7 +304,15 @@ body {
   position: relative;
   transition: all 0.3s ease-in-out;
 }
-
+.logo-text {
+  font-family: "Arial", sans-serif;
+  font-size: 3rem;
+  font-weight: 700;
+  text-align: center;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3); /* Thêm bóng cho chữ */
+}
 .logo .logo-text b {
   color: #3f51b5; /* Tạo điểm nhấn với màu khác */
 }
@@ -330,12 +338,14 @@ body {
 .nav .nav-link {
   font-size: 1.25rem; /* Kích thước chữ lớn hơn (20px) */
   font-weight: bold; /* Làm chữ đậm */
+  text-decoration: none;
 }
 
 .nav .nav-link:hover {
-  text-decoration: underline; /* Hiệu ứng khi hover */
+  text-decoration: none !important; /* Hiệu ứng khi hover */
   color: #ff5722; /* Màu chữ khi hover */
 }
+
 .product-card {
   position: relative;
   overflow: hidden;

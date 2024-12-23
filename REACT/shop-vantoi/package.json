@@ -10,12 +10,17 @@
     "bootstrap": "^5.3.3",
     "bootstrap-icons": "^1.11.3",
     "chart.js": "^4.4.7",
+    "framer-motion": "^11.15.0",
     "react": "^18.3.1",
     "react-bootstrap": "^2.10.7",
     "react-chartjs-2": "^5.2.0",
     "react-dom": "^18.3.1",
     "react-router-dom": "^7.0.2",
     "react-scripts": "5.0.1",
+    "stream-chat": "^8.47.1",
+    "stream-chat-expo": "^6.0.1",
+    "stream-chat-react": "^12.8.1",
+    "sweetalert2": "^11.15.3",
     "web-vitals": "^2.1.4"
   },
   "scripts": {

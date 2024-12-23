@@ -1,8 +1,17 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom"; // Import useNavigate
+import Swal from "sweetalert2";
 
 const CartPage = ({ cart, setCart }) => {
   const navigate = useNavigate(); // Khởi tạo navigate
+  const user = JSON.parse(localStorage.getItem("user"));
+
+  useEffect(() => {
+    const savedCart = localStorage.getItem("cart");
+    if (savedCart) {
+      setCart(JSON.parse(savedCart));
+    }
+  }, [setCart]);
 
   const handleRemoveFromCart = (index) => {
     const updatedCart = [...cart];
@@ -24,6 +33,48 @@ const CartPage = ({ cart, setCart }) => {
     0
   );
 
+  useEffect(() => {
+    if (cart.length > 0) {
+      localStorage.setItem("cart", JSON.stringify(cart));
+    } else {
+      localStorage.removeItem("cart"); // Xoá nếu giỏ hàng trống
+    }
+  }, [cart]);
+
+  const handleAddToCart = (product) => {
+    if (!user) {
+      // Nếu người dùng chưa đăng nhập, yêu cầu đăng nhập
+      Swal.fire({
+        title: "Bạn cần đăng nhập để xem và thêm sản phẩm vào giỏ hàng.",
+        text: user.message || "Vui lòng kiểm tra lại thông tin đăng nhập.",
+        icon: "error",
+        confirmButtonText: "Thử lại",
+      });
+      navigate("/login"); // Điều hướng đến trang đăng nhập
+      return;
+    }
+
+    // Nếu đã đăng nhập, thêm sản phẩm vào giỏ hàng
+    setCart((prevCart) => [...prevCart, { ...product, quantity: 1 }]);
+  };
+
+  // Nếu người dùng chưa đăng nhập, hiển thị thông báo và yêu cầu đăng nhập
+  if (!user) {
+    return (
+      <div className="container my-4">
+        <h2 className="text-center">Giỏ hàng</h2>
+        <p className="text-center">
+          Bạn cần đăng nhập để xem và thêm sản phẩm vào giỏ hàng.
+        </p>
+        <button
+          className="btn btn-primary"
+          onClick={() => navigate("/login")} // Chuyển hướng đến trang đăng nhập
+        >
+          Đăng nhập
+        </button>
+      </div>
+    );
+  }
   return (
     <div className="container my-4">
       <h2 className="text-center">Giỏ hàng của bạn</h2>
@@ -33,7 +84,7 @@ const CartPage = ({ cart, setCart }) => {
         <div>
           <div className="row">
             {cart.map((item, index) => (
-              <div key={index} className="col-md-4 mb-3">
+              <div key={index} className="col-md-3 mb-4">
                 <div className="card h-100">
                   <img
                     src={
@@ -43,7 +94,11 @@ const CartPage = ({ cart, setCart }) => {
                     }
                     className="card-img-top"
                     alt={item.productName}
-                    style={{ height: "150px", objectFit: "cover" }}
+                    style={{
+                      width: "100%",
+                      height: "150px",
+                      objectFit: "cover",
+                    }}
                   />
                   <div className="card-body">
                     <h5 className="card-title">{item.productName}</h5>

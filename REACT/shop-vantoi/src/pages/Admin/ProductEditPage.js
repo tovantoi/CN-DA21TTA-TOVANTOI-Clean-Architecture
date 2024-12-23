@@ -105,7 +105,6 @@ const ProductEditPage = () => {
 
   if (loading) return <div>Đang tải...</div>;
   if (error) return <div className="alert alert-danger">{error}</div>;
-
   return (
     <div className="container mt-4">
       <h2>Sửa sản phẩm</h2>

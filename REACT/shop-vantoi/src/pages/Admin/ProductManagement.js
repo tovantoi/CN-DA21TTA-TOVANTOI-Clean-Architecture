@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 
 const ProductManagement = () => {
   const [products, setProducts] = useState([]);
@@ -57,7 +58,7 @@ const ProductManagement = () => {
         setProducts(products.filter((product) => product.id !== id));
         setSuccessMessage("Xóa sản phẩm thành công!");
         setTimeout(() => {
-          setSuccessMessage(""); 
+          setSuccessMessage("");
         }, 3000);
       } else {
         throw new Error(result.message || "Không thể xóa sản phẩm.");
@@ -69,7 +70,25 @@ const ProductManagement = () => {
 
   return (
     <div className="container my-4">
-      <h2 className="text-center mb-4">Quản lý sản phẩm</h2>
+      <motion.h2
+        className="text-center mb-4"
+        initial={{ opacity: 0, scale: 0.5 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{
+          duration: 1,
+          repeat: Infinity, // Lặp lại vô hạn
+          repeatType: "reverse", // Lặp lại theo chiều ngược lại
+          repeatDelay: 2, // Đợi 4 giây (tổng thời gian sẽ là 5 giây vì thời gian animation là 1 giây)
+        }}
+        style={{
+          background: "linear-gradient(45deg, #ff6ec7, #ffy900)",
+          color: "red",
+          WebkitBackgroundClip: "text",
+          backgroundClip: "text",
+        }}
+      >
+        Quản lý sản phẩm
+      </motion.h2>
 
       {error && <div className="alert alert-danger">{error}</div>}
       {successMessage && (
