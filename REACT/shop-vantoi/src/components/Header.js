@@ -13,7 +13,7 @@ const Header = ({ cart }) => {
 
   useEffect(() => {
     const swalInstance = Swal.fire({
-      title: "Đang lấy thông tin danh mục...",
+      title: "Đang tải trang...",
       width: 600,
       padding: "3em",
       color: "#716add",
@@ -24,14 +24,18 @@ const Header = ({ cart }) => {
                     left top
                     no-repeat
                   `,
+      allowOutsideClick: false, // Ngăn người dùng đóng alert bằng cách click bên ngoài
+      showConfirmButton: false,
     });
+    const timeoutId = setTimeout(() => {
+      swalInstance.close();
+    }, 1000);
     try {
       const userData = localStorage.getItem("user");
 
       if (userData) {
         const parsedUser = JSON.parse(userData);
         setUser(parsedUser);
-        swalInstance.close();
       }
     } catch (error) {
       console.error("Lỗi khi lấy dữ liệu người dùng từ localStorage:", error);

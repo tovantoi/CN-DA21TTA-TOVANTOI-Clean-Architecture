@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using System.Text.Json.Serialization;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace chuyennganh.Application.Response
 {
@@ -15,13 +16,14 @@ namespace chuyennganh.Application.Response
         public object? Query { get; set; }
 
         // Static method for successful response
-        public static ServiceResponse Success(string message, string? token = null)
+        public static ServiceResponse Success(string message, string? token = null, object? query = null)
         {
             return new ServiceResponse
             {
                 IsSuccess = true,
                 StatusCode = StatusCodes.Status200OK,
                 Message = message,
+                Query = query,
                 Errors = null
             };
         }

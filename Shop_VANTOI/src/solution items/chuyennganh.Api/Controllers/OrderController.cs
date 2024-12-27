@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using chuyennganh.Application.App.OrderApp.Command;
+using chuyennganh.Domain.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,9 +14,13 @@ namespace chuyennganh.Api.Controllers
         public static async Task<IResult> CreateOrder([FromBody] CreateOrderRequest request, IMediator mediator, IMapper mapper)
         {
 
-                var command = mapper.Map<CreateOrderRequest>(request);
-                var result = await mediator.Send(command);
-                return TypedResults.BadRequest(result);
+            var command = mapper.Map<CreateOrderRequest>(request);
+            var result = await mediator.Send(command);
+            if (result.IsSuccess)
+            {
+                return TypedResults.Ok(result);
+            }
+            return TypedResults.BadRequest(result);
         }
 
     }

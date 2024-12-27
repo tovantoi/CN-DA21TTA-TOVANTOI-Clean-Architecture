@@ -47,9 +47,26 @@ Chart.register(CategoryScale, ArcElement, BarElement, Tooltip, Legend);
 const AppContent = ({ cart, setCart, emailForOtp, setEmailForOtp }) => {
   const location = useLocation();
   const isAdminRoute = location.pathname.startsWith("/admin");
+  const definedRoutes = [
+    "/", // Các route hợp lệ
+    "/login",
+    "/logout",
+    "/register",
+    "/my-account",
+    "/products",
+    "/contact",
+    "/blogpage",
+    "/phukien",
+    "/search-results",
+    "/checkout",
+    "/cart",
+  ];
+  const isNotFound = !definedRoutes.some((route) =>
+    new RegExp(`^${route.replace(/:[^/]+/g, "[^/]+")}$`).test(location.pathname)
+  );
+
   const ProtectedRoute = ({ children }) => {
     const user = JSON.parse(localStorage.getItem("user"));
-
     if (!user || user.role !== 1) {
       // Điều hướng đến trang login nếu không phải admin
       return <Navigate to="/login" />;
@@ -60,10 +77,10 @@ const AppContent = ({ cart, setCart, emailForOtp, setEmailForOtp }) => {
 
   return (
     <div>
-      {!isAdminRoute && <Header cart={cart} />}{" "}
+      {!isAdminRoute && !isNotFound && <Header cart={cart} />}{" "}
       {/* Hiển thị Header nếu không phải admin */}
       <Routes>
-        <Route path="*" element={<NotFoundPage />} />
+        <Route path="/*" element={<NotFoundPage />} />
         <Route path="/" element={<HomePage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/logout" element={<Logout />} />
@@ -75,6 +92,10 @@ const AppContent = ({ cart, setCart, emailForOtp, setEmailForOtp }) => {
         <Route path="/phukien" element={<Phukien />} />
         <Route path="/search-results" element={<SearchResultsPage />} />
         <Route path="/checkout" element={<CheckoutPage cart={cart} />} />
+        <Route
+          path="/checkout"
+          element={<CheckoutPage cart={cart} setCart={setCart} />}
+        />
         <Route
           path="/product/:productId"
           element={
@@ -123,7 +144,8 @@ const AppContent = ({ cart, setCart, emailForOtp, setEmailForOtp }) => {
           element={<ChangePasswordPage email={emailForOtp} />}
         />
       </Routes>
-      {!isAdminRoute && <Footer />} {/* Hiển thị Footer nếu không phải admin */}
+      {!isAdminRoute && !isNotFound && <Footer />}{" "}
+      {/* Hiển thị Footer nếu không phải admin */}
     </div>
   );
 };

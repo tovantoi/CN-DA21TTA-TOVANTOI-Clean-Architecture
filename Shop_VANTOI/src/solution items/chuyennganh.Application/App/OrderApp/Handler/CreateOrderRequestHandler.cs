@@ -10,6 +10,8 @@ using chuyennganh.Domain.Entities;
 using chuyennganh.Domain.Enumerations;
 using chuyennganh.Domain.ExceptionEx;
 using MediatR;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 
 namespace chuyennganh.Application.App.OrderApp.Handler
 {
@@ -103,7 +105,11 @@ namespace chuyennganh.Application.App.OrderApp.Handler
                 catch (Exception)
                 {
                     await transaction.RollbackAsync(cancellationToken);
-                    throw;
+                    return new ServiceResponse
+                    {
+                        IsSuccess = false,
+                        StatusCode = StatusCodes.Status500InternalServerError,
+                    };
                 }
             }
         }

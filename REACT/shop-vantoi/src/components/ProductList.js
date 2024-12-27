@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 
 const ProductList = () => {
   const [products, setProducts] = useState([]);
@@ -41,7 +42,25 @@ const ProductList = () => {
 
   return (
     <div className="product-list container">
-      <h2 className="text-center my-4">Danh Sách Sản Phẩm</h2>
+      <motion.h1
+        className="text-center mb-4"
+        initial={{ opacity: 0, scale: 0.5 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{
+          duration: 1,
+          repeat: Infinity, // Lặp lại vô hạn
+          repeatType: "reverse", // Lặp lại theo chiều ngược lại
+          repeatDelay: 2, // Đợi 4 giây (tổng thời gian sẽ là 5 giây vì thời gian animation là 1 giây)
+        }}
+        style={{
+          background: "linear-gradient(45deg, #ff6ec7, #ffy900)",
+          color: "Blue",
+          WebkitBackgroundClip: "text",
+          backgroundClip: "text",
+        }}
+      >
+        Danh sách sản phẩm
+      </motion.h1>
       {error && <div className="alert alert-danger">{error}</div>}
       <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-3">
         {products.length > 0 ? (

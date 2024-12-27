@@ -9,6 +9,7 @@ namespace chuyennganh.Api.Endpoints
             var customers = app.MapGroup("/minimal/api");
 
             customers.MapPost("/create-coupon", CouponController.CreateCoupon);
+            customers.MapGet("/get-code-coupon", CouponController.GetByCodeCoupon);
 
             return app;
         }

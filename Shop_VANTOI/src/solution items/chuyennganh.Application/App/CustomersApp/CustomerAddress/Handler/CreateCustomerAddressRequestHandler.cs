@@ -3,6 +3,7 @@ using chuyennganh.Application.App.CustomersApp.CustomerAddress.Command;
 using chuyennganh.Application.App.CustomersApp.Validators;
 using chuyennganh.Application.Repositories.CustomerAddressRPRepo;
 using chuyennganh.Application.Response;
+using chuyennganh.Domain.Entities;
 using MediatR;
 using Entities = chuyennganh.Domain.Entities;
 
@@ -32,8 +33,9 @@ namespace NhaThuoc.Application.Handlers.CustomerAddress
 
                     await customerAddressRepository.AddAsync(customeraddress);
                     await customerAddressRepository.SaveChangeAsync();
+                    var createdAddressId = customeraddress.Id;
                     await transaction.CommitAsync(cancellationToken);
-                    return ServiceResponse.Success("Tạo địa chỉ thành công");
+                    return ServiceResponse.Success("Tạo địa chỉ thành công", query: new { Id = createdAddressId });
                 }
                 catch (Exception)
                 {

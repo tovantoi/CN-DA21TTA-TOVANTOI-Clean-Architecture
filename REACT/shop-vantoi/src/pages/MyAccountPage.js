@@ -7,6 +7,7 @@ const MyAccountPage = () => {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
+    avatarImagePath: "",
   });
   const [error, setError] = useState("");
 
@@ -56,6 +57,7 @@ const MyAccountPage = () => {
         setFormData({
           name: data.data.firstName || "",
           email: data.data.email || "",
+          avatarImagePath: data.data.avatarImagePath || "",
         });
       } catch (err) {
         console.error("Error fetching customer by ID:", err);
@@ -111,7 +113,12 @@ const MyAccountPage = () => {
       setUser(updatedUser);
       localStorage.setItem("user", JSON.stringify(updatedUser));
       setIsEditing(false);
-      alert(result.message || "Cập nhật thông tin thành công!");
+      Swal.fire({
+        title: "Cập nhật thông tin thành công!",
+        text: result.message || "Đã cập nhật!",
+        icon: "success",
+        confirmButtonText: "OK",
+      });
     } catch (err) {
       console.error(err);
       setError(err.message || "Đã xảy ra lỗi. Vui lòng thử lại sau.");
@@ -221,6 +228,28 @@ const MyAccountPage = () => {
                 className="form-control"
               />
             </div>
+            {formData.avatarImagePath && !formData.imageData && (
+              <div className="form-group">
+                <label>Current Image</label>
+                <div>
+                  <img
+                    src={
+                      formData.avatarImagePath &&
+                      formData.avatarImagePath !== "string"
+                        ? `https://localhost:7241/${formData.avatarImagePath}`
+                        : "https://via.placeholder.com/400"
+                    }
+                    alt={formData.name}
+                    style={{
+                      width: "150px",
+                      height: "150px",
+                      objectFit: "cover",
+                    }}
+                  />
+                </div>
+              </div>
+            )}
+            {/* Chọn hình ảnh mới */}
             <div className="mb-3">
               <label htmlFor="imageData" className="form-label">
                 Ảnh đại diện
@@ -246,6 +275,27 @@ const MyAccountPage = () => {
                 className="form-control"
               />
             </div>
+
+            {/* Hiển thị hình ảnh xem trước nếu người dùng chọn ảnh mới */}
+            {formData.imageData && (
+              <div className="mb-3">
+                <label className="form-label">Ảnh xem trước</label>
+                <div className="d-flex align-items-center">
+                  <img
+                    src={formData.imageData}
+                    alt="Ảnh xem trước"
+                    className="img-thumbnail me-3"
+                    style={{
+                      width: "150px",
+                      height: "150px",
+                      objectFit: "cover",
+                    }}
+                  />
+                  <span className="text-muted">Hình ảnh xem trước</span>
+                </div>
+              </div>
+            )}
+
             <button className="btn btn-success" onClick={handleSave}>
               Lưu
             </button>
