@@ -268,6 +268,11 @@ const Header = ({ cart }) => {
               {user ? (
                 <>
                   <li>
+                    <Link to="/my-orders" className="dropdown-item">
+                      Đơn hàng của bạn
+                    </Link>
+                  </li>
+                  <li>
                     <Link to="/my-account" className="dropdown-item">
                       Tài khoản của tôi
                     </Link>

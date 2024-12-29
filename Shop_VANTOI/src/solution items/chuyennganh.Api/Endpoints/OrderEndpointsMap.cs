@@ -6,9 +6,12 @@ namespace chuyennganh.Api.Endpoints
     {
         public static IEndpointRouteBuilder MapOrderEndpoints(this IEndpointRouteBuilder app)
         {
-            var customers = app.MapGroup("/minimal/api");
+            var customers = app.MapGroup("/minimal/api"); 
 
             customers.MapPost("/create-order", OrderController.CreateOrder);
+            customers.MapGet("/get-orders", OrderController.GetAllOrder);
+            customers.MapGet("/get-order-by-id", OrderController.GetOrderById);
+            customers.MapGet("/get-order-by-customer-id", OrderController.GetOrderByCustomerId);
 
             return app;
         }

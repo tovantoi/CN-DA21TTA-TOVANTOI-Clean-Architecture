@@ -28,10 +28,12 @@ import CustomerManagement from "./pages/Admin/CustomerManagement";
 import CategoryManagement from "./pages/Admin/CategoryManagement";
 import AddCategory from "./pages/Admin/AddCategory";
 import EditCategory from "./pages/Admin/EditCategory";
+import OrderDetailPage from "./pages/OrderDetailPage";
 import ProductEditPage from "./pages/Admin/ProductEditPage";
 import RequestOtpPage from "./pages/RequestOtpPage";
 import ChangePasswordPage from "./pages/ChangePasswordPage";
 import AdminLayout from "./components/AdminLayout";
+import OrderManagementPage from "./pages/OrderManagementPage";
 import NotFoundPage from "./components/NotFoundPage";
 import {
   Chart,
@@ -50,6 +52,8 @@ const AppContent = ({ cart, setCart, emailForOtp, setEmailForOtp }) => {
   const definedRoutes = [
     "/", // Các route hợp lệ
     "/login",
+    "/my-orders",
+    "/order/:orderId",
     "/logout",
     "/register",
     "/my-account",
@@ -59,6 +63,7 @@ const AppContent = ({ cart, setCart, emailForOtp, setEmailForOtp }) => {
     "/phukien",
     "/search-results",
     "/checkout",
+    "/product/:productId",
     "/cart",
   ];
   const isNotFound = !definedRoutes.some((route) =>
@@ -81,6 +86,8 @@ const AppContent = ({ cart, setCart, emailForOtp, setEmailForOtp }) => {
       {/* Hiển thị Header nếu không phải admin */}
       <Routes>
         <Route path="/*" element={<NotFoundPage />} />
+        <Route path="/my-orders" element={<OrderManagementPage />} />
+        <Route path="/order/:orderId" element={<OrderDetailPage />} />
         <Route path="/" element={<HomePage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/logout" element={<Logout />} />

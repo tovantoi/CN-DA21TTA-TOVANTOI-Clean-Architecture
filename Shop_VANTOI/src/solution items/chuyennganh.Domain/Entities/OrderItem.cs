@@ -11,9 +11,9 @@ namespace chuyennganh.Domain.Entities
         public int? ProductId { get; set; }
         public int? Quantity { get; set; }
         public decimal TotalPrice { get; set; }
-
         [NotMapped]
         [JsonIgnore]
         public Order Order { get; set; }
+        public Product Product { get; set; }
     }
 }

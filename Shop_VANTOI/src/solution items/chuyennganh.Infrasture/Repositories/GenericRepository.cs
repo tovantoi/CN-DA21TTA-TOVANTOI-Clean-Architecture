@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
+using Org.BouncyCastle.Asn1;
 using System.Linq.Expressions;
 
 namespace chuyennganh.Infrasture.Repositories
@@ -15,15 +16,31 @@ namespace chuyennganh.Infrasture.Repositories
     {
         private readonly AppDbContext dbContext;
         private readonly ILogger<GenericRepository<T>> logger;
+        private readonly DbSet<T> _dbSet;
 
         public GenericRepository(AppDbContext dbContext, ILogger<GenericRepository<T>> logger)
         {
             this.dbContext = dbContext;
             this.logger = logger;
+            _dbSet = dbContext.Set<T>();
         }
         public async Task<IEnumerable<T>> FindAllAsync(Expression<Func<T, bool>> predicate)
         {
             return await dbContext.Set<T>().Where(predicate).ToListAsync();
+        }
+
+        public async Task<T?> FindSingleWithIncludesAsync(Expression<Func<T, bool>> predicate, params Expression<Func<T, object>>[] includeProperties)
+        {
+            IQueryable<T> query = _dbSet;
+
+            // Include các navigation properties
+            foreach (var includeProperty in includeProperties)
+            {
+                query = query.Include(includeProperty);
+            }
+
+            // Thêm predicate để lọc
+            return await query.FirstOrDefaultAsync(predicate);
         }
         public async Task<T> AddAsync(T entity)
         {

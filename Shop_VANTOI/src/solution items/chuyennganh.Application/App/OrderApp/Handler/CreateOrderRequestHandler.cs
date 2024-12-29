@@ -11,7 +11,6 @@ using chuyennganh.Domain.Enumerations;
 using chuyennganh.Domain.ExceptionEx;
 using MediatR;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Logging;
 
 namespace chuyennganh.Application.App.OrderApp.Handler
 {

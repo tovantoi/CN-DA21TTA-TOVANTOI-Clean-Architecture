@@ -19,6 +19,7 @@ namespace chuyennganh.Application.Repositories
         Task<(List<int>? existingIds, List<int>? missingIds)> CheckIdsExistAsync(List<int>? ids);
         Task<T?> FindSingleAsync(Expression<Func<T, bool>> predicate, params Expression<Func<T, object>>[] includeProperties);
         Task SaveChangeAsync();
+
         IDbContextTransaction BeginTransaction();
 
     }
