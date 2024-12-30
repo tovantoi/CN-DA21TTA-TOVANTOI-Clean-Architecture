@@ -22,6 +22,7 @@ const ProductEditPage = () => {
     seoTitle: "",
     seoAlias: "",
     isActive: true,
+    categoryIds: [],
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -34,7 +35,10 @@ const ProductEditPage = () => {
         );
         if (!response.ok) throw new Error("Không thể tải thông tin sản phẩm.");
         const data = await response.json();
-        setProduct(data); // Cập nhật state sản phẩm
+        setProduct((prev) => ({
+          ...data,
+          categoryIds: Array.isArray(data.categoryIds) ? data.categoryIds : [],
+        }));
       } catch (err) {
         setError(err.message);
       } finally {
@@ -47,7 +51,12 @@ const ProductEditPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    const payload = {
+      ...product,
+      categoryIds: Array.isArray(product.categoryIds)
+        ? product.categoryIds
+        : product.categoryIds.split(",").map((id) => parseInt(id.trim(), 10)),
+    };
     try {
       const response = await fetch(
         `https://localhost:7022/minimal/api/update-product?id=${productId}`,
@@ -56,7 +65,7 @@ const ProductEditPage = () => {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(product),
+          body: JSON.stringify(payload),
         }
       );
       const result = await response.json();
@@ -108,6 +117,13 @@ const ProductEditPage = () => {
       reader.readAsDataURL(file); // Đọc file
     }
   };
+  const handleCategoryIdsChange = (e) => {
+    const value = e.target.value;
+    setProduct((prevProduct) => ({
+      ...prevProduct,
+      categoryIds: value, // Lưu chuỗi thô trước khi xử lý
+    }));
+  };
 
   const handleCheckboxChange = (e) => {
     const { name, checked } = e.target;
@@ -123,6 +139,50 @@ const ProductEditPage = () => {
     <div className="container mt-4">
       <h2>Sửa sản phẩm</h2>
       <form onSubmit={handleSubmit}>
+        <div className="col-md-12">
+          <label className="form-label">
+            Danh mục (ID cách nhau bằng dấu phẩy)
+          </label>
+          <input
+            type="text"
+            value={
+              Array.isArray(product.categoryIds)
+                ? product.categoryIds.join(",")
+                : product.categoryIds
+            } // Hiển thị chuỗi danh mục
+            onChange={handleCategoryIdsChange}
+            onKeyPress={(e) => {
+              // Chỉ cho phép nhập số, dấu phẩy và xóa (Backspace)
+              if (!/[0-9,]/.test(e.key) && e.key !== "Backspace") {
+                e.preventDefault();
+              }
+            }}
+            className="form-control"
+          />
+        </div>
+        {/* Hiển thị hình ảnh hiện tại nếu có và chưa chọn hình ảnh mới */}
+        {product.imagePath && !product.imageData && (
+          <div className="form-group">
+            <label>Hình ảnh hiện tại</label>
+            <div>
+              <img
+                src={
+                  product.imagePath && product.imagePath !== "string"
+                    ? `https://localhost:7241/${product.imagePath}`
+                    : "https://via.placeholder.com/400"
+                }
+                alt={product.productName}
+                style={{
+                  width: "150px",
+                  height: "150px",
+                  objectFit: "cover",
+                }}
+              />
+            </div>
+          </div>
+        )}
+
+        {/* Chọn hình ảnh mới */}
         <div className="mb-3">
           <label htmlFor="imageData" className="form-label">
             Hình ảnh sản phẩm
@@ -132,24 +192,43 @@ const ProductEditPage = () => {
             id="imageData"
             name="imageData"
             accept="image/*"
-            onChange={handleFileChange}
+            onChange={(e) => {
+              const file = e.target.files[0];
+              if (file) {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                  setProduct((prevProduct) => ({
+                    ...prevProduct,
+                    imageData: event.target.result,
+                  }));
+                };
+                reader.readAsDataURL(file); // Đọc file và chuyển thành Base64
+              }
+            }}
             className="form-control"
           />
         </div>
 
+        {/* Hiển thị hình ảnh xem trước nếu người dùng chọn ảnh mới */}
         {product.imageData && (
           <div className="mb-3">
-            <label className="form-label">Xem trước hình ảnh</label>
-            <div className="preview-container">
+            <label className="form-label">Ảnh xem trước</label>
+            <div className="d-flex align-items-center">
               <img
                 src={product.imageData}
                 alt="Xem trước sản phẩm"
-                className="img-thumbnail"
-                style={{ maxWidth: "300px", height: "auto" }}
+                className="img-thumbnail me-3"
+                style={{
+                  width: "150px",
+                  height: "150px",
+                  objectFit: "cover",
+                }}
               />
+              <span className="text-muted">Hình ảnh xem trước</span>
             </div>
           </div>
         )}
+
         <div className="mb-3">
           <label htmlFor="productName" className="form-label">
             Tên sản phẩm

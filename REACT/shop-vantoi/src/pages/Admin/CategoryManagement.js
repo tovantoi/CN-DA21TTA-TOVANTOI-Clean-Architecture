@@ -26,7 +26,6 @@ const CategoryManagement = () => {
 
   const handleDelete = async (categoryId, categoryName) => {
     try {
-      // Hiển thị thông báo xác nhận
       const result = await Swal.fire({
         title: "Bạn có chắc muốn xóa danh mục?",
         text: `Danh mục: ${categoryName}`,
@@ -37,7 +36,6 @@ const CategoryManagement = () => {
       });
 
       if (result.isConfirmed) {
-        // Nếu người dùng xác nhận xóa, thực hiện xóa danh mục
         const response = await fetch(
           `https://localhost:7022/minimal/api/delete-category?id=${categoryId}`,
           { method: "DELETE" }
@@ -45,12 +43,10 @@ const CategoryManagement = () => {
 
         if (!response.ok) throw new Error("Không thể xóa danh mục.");
 
-        // Xóa danh mục khỏi danh sách
         setCategories(
           categories.filter((category) => category.id !== categoryId)
         );
 
-        // Hiển thị thông báo xóa thành công
         Swal.fire({
           title: "Thành công!",
           text: "Danh mục đã được xóa.",
@@ -62,6 +58,7 @@ const CategoryManagement = () => {
       setError(err.message || "Đã xảy ra lỗi khi xóa danh mục.");
     }
   };
+
   return (
     <div className="container my-4">
       <motion.h1
@@ -70,9 +67,9 @@ const CategoryManagement = () => {
         animate={{ opacity: 1, scale: 1 }}
         transition={{
           duration: 1,
-          repeat: Infinity, // Lặp lại vô hạn
-          repeatType: "reverse", // Lặp lại theo chiều ngược lại
-          repeatDelay: 2, // Đợi 4 giây (tổng thời gian sẽ là 5 giây vì thời gian animation là 1 giây)
+          repeat: Infinity,
+          repeatType: "reverse",
+          repeatDelay: 2,
         }}
         style={{
           background: "linear-gradient(45deg, #ff6ec7, #ffy900)",
@@ -94,17 +91,28 @@ const CategoryManagement = () => {
             key={category.id}
             style={{ width: "200px" }}
           >
-            <img
-              src={
-                category.imagePath && category.imagePath !== "string"
-                  ? `https://localhost:7241/${category.imagePath}`
-                  : "https://via.placeholder.com/400"
-              }
-              alt={category.name}
-              style={{ width: "100%", height: "250px", objectFit: "cover" }}
-            />
+            <Link
+              to={`/admin/category-products/${category.id}`}
+              style={{ textDecoration: "none", color: "inherit" }}
+            >
+              <img
+                src={
+                  category.imagePath && category.imagePath !== "string"
+                    ? `https://localhost:7241/${category.imagePath}`
+                    : "https://via.placeholder.com/400"
+                }
+                alt={category.name}
+                style={{
+                  width: "200px",
+                  height: "250px",
+                  objectFit: "cover",
+                }}
+              />
+              <div className="card-body">
+                <h5>{category.name}</h5>
+              </div>
+            </Link>
             <div className="card-body">
-              <h5>{category.name}</h5>
               <Link
                 to={`/admin/edit-category/${category.id}`}
                 className="btn btn-warning m-1"
@@ -112,7 +120,7 @@ const CategoryManagement = () => {
                 Chỉnh sửa
               </Link>
               <button
-                onClick={() => handleDelete(category.id)}
+                onClick={() => handleDelete(category.id, category.name)}
                 className="btn btn-danger m-1"
               >
                 Xóa

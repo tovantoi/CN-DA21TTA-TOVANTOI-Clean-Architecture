@@ -49,16 +49,21 @@ const AddProduct = () => {
   };
 
   const handleCategoryIdsChange = (e) => {
-    const ids = e.target.value
-      .split(",")
-      .map((id) => parseInt(id.trim(), 10))
-      .filter((id) => !isNaN(id));
-    setFormData({ ...formData, categoryIds: ids });
+    const value = e.target.value;
+    setFormData((prevProduct) => ({
+      ...prevProduct,
+      categoryIds: value, // Lưu chuỗi thô trước khi xử lý
+    }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    const payload = {
+      ...formData,
+      categoryIds: Array.isArray(formData.categoryIds)
+        ? formData.categoryIds
+        : formData.categoryIds.split(",").map((id) => parseInt(id.trim(), 10)),
+    };
     try {
       // Thêm thông báo "Đang gửi yêu cầu..." trong frontend
       Swal.fire({
@@ -81,7 +86,7 @@ const AddProduct = () => {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(formData),
+          body: JSON.stringify(payload),
         }
       );
 
@@ -325,11 +330,17 @@ const AddProduct = () => {
           <input
             type="text"
             value={
-              formData.categoryIds.length > 0
+              Array.isArray(formData.categoryIds)
                 ? formData.categoryIds.join(",")
-                : ""
-            }
+                : formData.categoryIds
+            } // Hiển thị chuỗi danh mục
             onChange={handleCategoryIdsChange}
+            onKeyPress={(e) => {
+              // Chỉ cho phép nhập số, dấu phẩy và xóa (Backspace)
+              if (!/[0-9,]/.test(e.key) && e.key !== "Backspace") {
+                e.preventDefault();
+              }
+            }}
             className="form-control"
           />
         </div>

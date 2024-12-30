@@ -18,7 +18,7 @@ namespace chuyennganh.Application.Repositories
         IQueryable<T> FindAll(Expression<Func<T, bool>>? predicate = null, params Expression<Func<T, object>>[] includeProperties);
         Task<(List<int>? existingIds, List<int>? missingIds)> CheckIdsExistAsync(List<int>? ids);
         Task<T?> FindSingleAsync(Expression<Func<T, bool>> predicate, params Expression<Func<T, object>>[] includeProperties);
-        Task SaveChangeAsync();
+        Task<int> SaveChangeAsync(CancellationToken cancellationToken = default);
 
         IDbContextTransaction BeginTransaction();
 

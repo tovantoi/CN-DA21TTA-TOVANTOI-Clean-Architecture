@@ -2,6 +2,7 @@
 using chuyennganh.Domain.Base;
 using chuyennganh.Domain.Entities;
 using chuyennganh.Infrasture.Context;
+using chuyennganh.Infrasture.Exception;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
@@ -132,21 +133,17 @@ namespace chuyennganh.Infrasture.Repositories
         }
         public async Task<(List<int>? existingIds, List<int>? missingIds)> CheckIdsExistAsync(List<int>? ids)
         {
-            try
+            ids = ids.Distinct().ToList() ?? new List<int>();
+            var existingIds = await dbContext.Set<Category>()
+                                   .Where(category => category.Id.HasValue && ids.Contains(category.Id.Value))
+                                   .Select(category => category.Id.Value)
+                                   .ToListAsync();
+            var missingIds = ids.Except(existingIds).ToList();
+            if (missingIds.Any())
             {
-                ids = ids.Distinct().ToList() ?? new List<int>();
-                var existingIds = await dbContext.Set<Category>()
-                                       .Where(category => category.Id.HasValue && ids.Contains(category.Id.Value))
-                                       .Select(category => category.Id.Value)
-                                       .ToListAsync();
-                var missingIds = ids.Except(existingIds).ToList();
-                return (existingIds, missingIds);
+                throw new ShopException(StatusCodes.Status404NotFound, new List<string> { $"Id {string.Join(", ", missingIds)} is not found in Category" });
             }
-            catch (System.Exception ex)
-            {
-                logger.LogError(ex, "Error retrieving entity by ProductId from the database!");
-                throw;
-            }
+            return (existingIds, missingIds);
         }
 
         public async Task<T?> FindSingleAsync(Expression<Func<T, bool>> predicate, params Expression<Func<T, object>>[] includeProperties)
@@ -187,7 +184,7 @@ namespace chuyennganh.Infrasture.Repositories
                 throw;
             }
         }
-        public Task SaveChangeAsync() => dbContext.SaveChangesAsync();
+        public Task<int> SaveChangeAsync(CancellationToken cancellationToken = default) => dbContext.SaveChangesAsync();
 
         public IDbContextTransaction BeginTransaction()
         {

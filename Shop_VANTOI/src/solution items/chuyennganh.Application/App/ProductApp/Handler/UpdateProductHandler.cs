@@ -4,12 +4,12 @@ using chuyennganh.Application.App.ProductApp.Validators;
 using chuyennganh.Application.Repositories.CategoryRepo;
 using chuyennganh.Application.Repositories.ProductRepo;
 using chuyennganh.Application.Response;
-using chuyennganh.Application.Response.ProductsRP;
 using chuyennganh.Domain;
 using chuyennganh.Domain.Entities;
 using chuyennganh.Domain.Enumerations;
+using chuyennganh.Domain.ExceptionEx;
 using MediatR;
-using Microsoft.Extensions.Logging;
+using Entities = chuyennganh.Domain.Entities;
 
 namespace chuyennganh.Application.App.ProductApp.Handler
 {
@@ -19,83 +19,90 @@ namespace chuyennganh.Application.App.ProductApp.Handler
         private readonly ICategoryRepository categoryRepository;
         private readonly IProductCategoryRepository productCategoryRepository;
         private readonly IMapper mapper;
-        private readonly ILogger<UpdateProductHandler> logger;
         private readonly IFileService fileService;
 
-        public UpdateProductHandler(IProductRepository productRepository, IMapper mapper, ILogger<UpdateProductHandler> logger, ICategoryRepository categoryRepository, IProductCategoryRepository productCategoryRepository, IFileService fileService)
+        public UpdateProductHandler(IProductRepository productRepository, IMapper mapper, ICategoryRepository categoryRepository, IProductCategoryRepository productCategoryRepository, IFileService fileService)
         {
             this.productRepository = productRepository;
             this.mapper = mapper;
-            this.logger = logger;
             this.categoryRepository = categoryRepository;
             this.productCategoryRepository = productCategoryRepository;
             this.fileService = fileService;
         }
         public async Task<ServiceResponse> Handle(UpdateProductCommand request, CancellationToken cancellationToken)
         {
-            var response = new ServiceResponse();
-            await using (var transaction = productRepository.BeginTransaction())
+            await using (var transaction = categoryRepository.BeginTransaction())
             {
                 try
                 {
                     var validator = new UpdateProductValidator();
                     var validationResult = await validator.ValidateAsync(request, cancellationToken);
-                    var product = await productRepository.GetByIdAsync(request.Id!);
+                    validationResult.ThrowIfInvalid();
+
+                    var product = await productRepository.GetByIdAsync(request.Id);
+                    if (product is null) product.ThrowNotFound();
                     if (request.CategoryIds is not null && request.CategoryIds.Any()) await categoryRepository.CheckIdsExistAsync(request.CategoryIds.ToList());
 
                     var dubCategoryId = request.CategoryIds.GroupBy(id => id).Where(g => g.Count() > 1).Select(g => g.Key).ToList();
-                    if (!validationResult.IsValid)
-                    {
-                        response.IsSuccess = false;
-                        response.Message = "Update Failed";
-                        response.Errors = validationResult.Errors?.Select(e => e.ErrorMessage).ToList() ?? new List<string>();
-                        logger.LogWarning("Validation failed for UpdateProductRequest: {Errors}", response.Errors);
-                        return response;
-                    }
+                    if (dubCategoryId.Any()) dubCategoryId.ThrowConflict();
+
+                    product.ProductName = request.ProductName ?? product.ProductName;
+                    product.RegularPrice = request.RegularPrice ?? product.RegularPrice;
+                    product.DiscountPrice = request.DiscountPrice ?? product.DiscountPrice;
+                    product.Description = request.Description ?? product.Description;
+                    product.Brand = request.Brand ?? product.Brand;
+                    product.Size = request.Size ?? product.Size;
+                    product.Color = request.Color ?? product.Color;
+                    product.Material = request.Material ?? product.Material;
+                    product.Gender = request.Gender ?? product.Gender;
+                    product.Packaging = request.Packaging ?? product.Packaging;
+                    product.Origin = request.Origin ?? product.Origin;
+                    product.Manufacturer = request.Manufacturer ?? product.Manufacturer;
+
                     if (request.ImageData is not null)
                     {
                         string fileName = (Path.GetFileName(product.ImagePath) is { } name &&
-                        Path.GetExtension(name)?.ToLowerInvariant() == fileService.GetFileExtensionFromBase64(request.ImageData)?.ToLowerInvariant()) ? name : $"{product.Id}{fileService.GetFileExtensionFromBase64(request.ImageData)}";
+                            Path.GetExtension(name)?.ToLowerInvariant() == fileService.GetFileExtensionFromBase64(request.ImageData)?.ToLowerInvariant())
+                            ? name
+                            : $"{product.Id}{fileService.GetFileExtensionFromBase64(request.ImageData)}";
+
                         product.ImagePath = await fileService.UploadFile(fileName, request.ImageData, AssetType.PRODUCT_IMG);
                     }
-                    if (request.CategoryIds is not null)
-                    {
-                        var existingProduct = productCategoryRepository.FindAll(x => x.ProductId == request.Id).ToList();
-                        productCategoryRepository.RemoveMultiple(existingProduct);
-                    }
-                    product.ProductCategories = request.CategoryIds?.Distinct().Select(categoryId => new ProductCategory
-                    {
-                        ProductId = product.Id,
-                        CategoryId = categoryId
-                    }).ToList() ?? product.ProductCategories;
 
-                   
-                    if (product == null)
+                    product.SeoAlias = request.SeoAlias ?? product.SeoAlias;
+                    product.SeoTitle = request.SeoTitle ?? product.SeoTitle;
+                    product.IsActive = request.IsActive ?? product.IsActive;
+
+
+                    if (request.CategoryIds is not null && request.CategoryIds.Any())
                     {
-                        response.IsSuccess = false;
-                        response.Message = "Product not found";
-                        logger.LogWarning("Update failed for UpdateProductRequest: Product not found with ID: {Id}", request.Id);
-                        return response;
+                        // Lấy danh sách danh mục hiện tại
+                        var existingProductCategories = productCategoryRepository.FindAll(x => x.ProductId == request.Id).ToList();
+
+                        // Xóa danh mục không còn tồn tại
+                        productCategoryRepository.RemoveMultiple(existingProductCategories);
+
+                        // Thêm mới danh mục
+                        foreach (var categoryId in request.CategoryIds.Distinct())
+                        {
+                            await productCategoryRepository.AddAsync(new ProductCategory
+                            {
+                                ProductId = product.Id,
+                                CategoryId = categoryId
+                            });
+                        }
                     }
-                   
-                    mapper.Map(request, product);
+
                     await productRepository.UpdateAsync(product);
                     await productRepository.SaveChangeAsync();
-
                     await transaction.CommitAsync(cancellationToken);
-                    logger.LogInformation("product updated successfully with ID: {Id}", product.Id);
-
-                    return new ProductRespose(product);
+                    return ServiceResponse.Success("Cập nhật thành công");
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     await transaction.RollbackAsync(cancellationToken);
-                    response.IsSuccess = false;
-                    response.Message = $"An error occurred: {ex.Message}";
-                    logger.LogError(ex, "An error occurred while creating product");
-                    return response;
+                    throw;
                 }
-
             }
         }
     }

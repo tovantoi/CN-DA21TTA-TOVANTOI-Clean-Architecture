@@ -26,6 +26,7 @@ import ProductManagement from "./pages/Admin/ProductManagement";
 import AddProduct from "./pages/Admin/AddProduct";
 import CustomerManagement from "./pages/Admin/CustomerManagement";
 import CategoryManagement from "./pages/Admin/CategoryManagement";
+import CategoryProductsPage from "./pages/Admin/CategoryProductsPage";
 import AddCategory from "./pages/Admin/AddCategory";
 import EditCategory from "./pages/Admin/EditCategory";
 import OrderDetailPage from "./pages/OrderDetailPage";
@@ -127,6 +128,7 @@ const AppContent = ({ cart, setCart, emailForOtp, setEmailForOtp }) => {
           <Route path="/admin/add-product" element={<AddProduct />} />
           <Route path="/admin/customers" element={<CustomerManagement />} />
           <Route path="/admin/category" element={<CategoryManagement />} />
+          <Route path="/admin/category-products/:id" element={<CategoryProductsPage />} />
           <Route path="/admin/add-category" element={<AddCategory />} />
           <Route path="/admin/edit-category/:id" element={<EditCategory />} />
           <Route
