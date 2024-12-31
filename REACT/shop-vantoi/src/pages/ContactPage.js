@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import emailjs from "@emailjs/browser";
+import { motion } from "framer-motion";
 
 const ContactPage = () => {
   const [formData, setFormData] = useState({
@@ -54,7 +55,27 @@ const ContactPage = () => {
 
   return (
     <div className="contact-page container py-5">
-      <h1 className="text-center mb-4">Liên hệ với chúng tôi</h1>
+      <motion.h1
+        className="text-center mb-4"
+        initial={{ opacity: 0, scale: 0.8, y: -50 }} // Bắt đầu mờ, nhỏ và di chuyển từ trên xuống
+        animate={{ opacity: 1, scale: 1, y: 0 }} // Hiển thị rõ, kích thước bình thường và đúng vị trí
+        transition={{
+          duration: 1.2, // Thời gian thực hiện hiệu ứng
+          ease: "easeOut", // Làm mềm hiệu ứng
+        }}
+        style={
+          {
+            color: "blueviolet"
+          }
+        }
+        whileHover={{
+          scale: 1.1, // Phóng to khi hover
+          textShadow: "0px 0px 10px rgba(255, 255, 255, 0.8)", // Ánh sáng khi hover
+          color: "#e91e63", // Đổi màu chữ khi hover
+        }}
+      >
+        Liên hệ với chúng tôi
+      </motion.h1>
       <div className="row">
         {/* Form Liên Hệ - Cột trái */}
         <div className="col-md-6">
@@ -137,12 +158,13 @@ const ContactPage = () => {
           <h4>Bản đồ</h4>
           <iframe
             title="Bản đồ"
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3724.5726342320786!2d105.85373661539272!3d21.00925639388813!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3135abbe87084d3f%3A0x476a1f9a752c5b9d!2zVmljb20gTWVnYSBDZW50ZXIgVmluaGNvbSBIw6AgVGjhu4sgSMOgIEzhuq1u!5e0!3m2!1svi!2s!4v1609929385905!5m2!1svi!2s"
-            width="100%"
-            height="300"
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15720.041799898867!2d106.3379707060428!3d9.933087178846494!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a019fdb8a5a1d9%3A0x57bc3f2bb4f54a3a!2zcGjGsOG7nW5nIDUsIFRwLiBUcsOgIFZpbmgsIFRyw6AgVmluaCwgVmnhu4d0IE5hbQ!5e0!3m2!1svi!2s!4v1735655185804!5m2!1svi!2s"
+            width="600"
+            height="450"
             style={{ border: 0 }}
-            allowFullScreen=""
+            allowfullscreen=""
             loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
           ></iframe>
         </div>
       </div>

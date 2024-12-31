@@ -11,6 +11,7 @@ namespace chuyennganh.Application.App.DTOs
         public decimal? TotalPrice { get; set; }
         public CustomerAddressDTO? Address { get; set; }
         public CouponDTO? Coupon { get; set; }
+
         public ICollection<OrderItemDTO>? OrderItems { get; set; }
     }
 }

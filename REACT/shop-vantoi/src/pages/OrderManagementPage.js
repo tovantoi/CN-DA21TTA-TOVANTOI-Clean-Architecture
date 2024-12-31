@@ -72,6 +72,18 @@ const OrderManagementPage = () => {
               key={order.id}
               onClick={(e) => {
                 if (!e.target.closest(".no-click")) {
+                  // Lưu thông tin sản phẩm vào localStorage
+                  localStorage.setItem(
+                    "selectedOrder",
+                    JSON.stringify({
+                      id: order.id,
+                      name: order.address?.fullName, // Thêm thông tin bạn muốn
+                      products: order.orderItems.map((item) => ({
+                        productName: item.productName,
+                        imagePath: item.imagePath,
+                      })),
+                    })
+                  );
                   navigate(`/order/${order.id}`);
                 }
               }}

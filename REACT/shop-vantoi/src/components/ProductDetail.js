@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
+import { motion } from "framer-motion";
 
 const ProductDetail = ({ addToCart }) => {
   const { productId } = useParams();
@@ -64,12 +65,26 @@ const ProductDetail = ({ addToCart }) => {
 
   return (
     <div className="container mt-4">
-      <button
-        onClick={() => navigate(-1)}
-        className="btn btn-primary btn-lg mb-3"
+      <motion.button
+        onClick={() => navigate(-1)} // Trở về danh sách bài viết
+        className="btn btn-primary mb-4"
+        initial={{ opacity: 0, scale: 0.9 }} // Nút bắt đầu mờ và nhỏ
+        animate={{ opacity: 1, scale: 1 }} // Nút hiện rõ và kích thước bình thường
+        whileHover={{
+          scale: 1.1, // Phóng to khi hover
+          backgroundColor: "#0056b3", // Đổi màu nền khi hover
+          boxShadow: "0px 0px 10px rgba(0, 0, 255, 0.5)", // Thêm ánh sáng khi hover
+        }}
+        whileTap={{
+          scale: 0.95, // Thu nhỏ nhẹ khi click
+        }}
+        transition={{
+          duration: 0.3, // Thời gian thực hiện hiệu ứng
+          ease: "easeInOut", // Làm mượt hiệu ứng
+        }}
       >
-        Quay lại
-      </button>
+        ← Quay lại
+      </motion.button>
 
       <div className="row">
         {/* Hình ảnh sản phẩm */}

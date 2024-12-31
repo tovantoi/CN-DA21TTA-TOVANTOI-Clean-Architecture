@@ -42,19 +42,19 @@ const ProductsByCategory = () => {
     <div className="container">
       <motion.h1
         className="text-center mb-4"
-        initial={{ opacity: 0, scale: 0.5 }}
-        animate={{ opacity: 1, scale: 1 }}
+        initial={{ opacity: 0, scale: 0.8, y: -50 }} // Bắt đầu mờ, nhỏ và di chuyển từ trên xuống
+        animate={{ opacity: 1, scale: 1, y: 0 }} // Hiển thị rõ, kích thước bình thường và đúng vị trí
         transition={{
-          duration: 1,
-          repeat: Infinity, // Lặp lại vô hạn
-          repeatType: "reverse", // Lặp lại theo chiều ngược lại
-          repeatDelay: 2, // Đợi 4 giây (tổng thời gian sẽ là 5 giây vì thời gian animation là 1 giây)
+          duration: 1.2, // Thời gian thực hiện hiệu ứng
+          ease: "easeOut", // Làm mềm hiệu ứng
         }}
         style={{
-          background: "linear-gradient(45deg, #ff6ec7, #ffy900)",
-          color: "Blue",
-          WebkitBackgroundClip: "text",
-          backgroundClip: "text",
+          color: "blueviolet",
+        }}
+        whileHover={{
+          scale: 1.1, // Phóng to khi hover
+          textShadow: "0px 0px 10px rgba(255, 255, 255, 0.8)", // Ánh sáng khi hover
+          color: "#e91e63", // Đổi màu chữ khi hover
         }}
       >
         Danh sách phụ kiện

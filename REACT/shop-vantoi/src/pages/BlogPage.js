@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
+import { motion } from "framer-motion";
 
 const BlogPage = () => {
   // Danh sách bài viết mẫu
@@ -82,6 +83,27 @@ const BlogPage = () => {
           >
             ← Quay lại
           </button> */}
+          <motion.button
+            onClick={() => setSelectedPostId(null)} // Trở về danh sách bài viết
+            className="btn btn-primary mb-4"
+            initial={{ opacity: 0, scale: 0.9 }} // Nút bắt đầu mờ và nhỏ
+            animate={{ opacity: 1, scale: 1 }} // Nút hiện rõ và kích thước bình thường
+            whileHover={{
+              scale: 1.1, // Phóng to khi hover
+              backgroundColor: "#0056b3", // Đổi màu nền khi hover
+              boxShadow: "0px 0px 10px rgba(0, 0, 255, 0.5)", // Thêm ánh sáng khi hover
+            }}
+            whileTap={{
+              scale: 0.95, // Thu nhỏ nhẹ khi click
+            }}
+            transition={{
+              duration: 0.3, // Thời gian thực hiện hiệu ứng
+              ease: "easeInOut", // Làm mượt hiệu ứng
+            }}
+          >
+            ← Quay lại
+          </motion.button>
+
           <h1 className="mb-3">{selectedPost.title}</h1>
           <img
             src={selectedPost.image}
@@ -93,7 +115,25 @@ const BlogPage = () => {
       ) : (
         // Danh sách bài viết
         <div>
-          <h1 className="mb-4 text-center">Blog - Phong cách</h1>
+          <motion.h1
+            className="text-center mb-4"
+            initial={{ opacity: 0, scale: 0.8, y: -50 }} // Bắt đầu mờ, nhỏ và di chuyển từ trên xuống
+            animate={{ opacity: 1, scale: 1, y: 0 }} // Hiển thị rõ, kích thước bình thường và đúng vị trí
+            transition={{
+              duration: 1.2, // Thời gian thực hiện hiệu ứng
+              ease: "easeOut", // Làm mềm hiệu ứng
+            }}
+            style={{
+              color: "blueviolet",
+            }}
+            whileHover={{
+              scale: 1.1, // Phóng to khi hover
+              textShadow: "0px 0px 10px rgba(255, 255, 255, 0.8)", // Ánh sáng khi hover
+              color: "#e91e63", // Đổi màu chữ khi hover
+            }}
+          >
+            Blog - Phong cách
+          </motion.h1>
           <div className="row g-4">
             {posts.map((post) => (
               <div key={post.id} className="col-12 col-sm-6 col-lg-3">

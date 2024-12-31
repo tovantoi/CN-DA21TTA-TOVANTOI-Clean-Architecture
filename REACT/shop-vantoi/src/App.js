@@ -32,6 +32,15 @@ import EditCategory from "./pages/Admin/EditCategory";
 import OrderDetailPage from "./pages/OrderDetailPage";
 import ProductEditPage from "./pages/Admin/ProductEditPage";
 import RequestOtpPage from "./pages/RequestOtpPage";
+import About from "./pages-footer/About";
+import Stores from "./pages-footer/Stores";
+import FAQ from "./pages-footer/FAQ";
+import ShippingPolicy from "./pages-footer/ShippingPolicy";
+import SizeGuide from "./pages-footer/SizeGuide";
+import PaymentGuide from "./pages-footer/PaymentGuide";
+import ExchangePolicy from "./pages-footer/ExchangePolicy";
+import PurchaseGuide from "./pages-footer/PurchaseGuide";
+import PrivacyPolicy from "./pages-footer/PrivacyPolicy";
 import ChangePasswordPage from "./pages/ChangePasswordPage";
 import AdminLayout from "./components/AdminLayout";
 import OrderManagementPage from "./pages/OrderManagementPage";
@@ -66,6 +75,17 @@ const AppContent = ({ cart, setCart, emailForOtp, setEmailForOtp }) => {
     "/checkout",
     "/product/:productId",
     "/cart",
+    "/change-password",
+    "/request-otp",
+    "/about",
+    "/stores",
+    "/privacy-policy",
+    "/faq",
+    "/shipping-policy",
+    "/size-guide",
+    "/payment-guide",
+    "/exchange-policy",
+    "/purchase-guide",
   ];
   const isNotFound = !definedRoutes.some((route) =>
     new RegExp(`^${route.replace(/:[^/]+/g, "[^/]+")}$`).test(location.pathname)
@@ -100,6 +120,23 @@ const AppContent = ({ cart, setCart, emailForOtp, setEmailForOtp }) => {
         <Route path="/phukien" element={<Phukien />} />
         <Route path="/search-results" element={<SearchResultsPage />} />
         <Route path="/checkout" element={<CheckoutPage cart={cart} />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/stores" element={<Stores />} />
+        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+        <Route path="/faq" element={<FAQ />} />
+        <Route path="/shipping-policy" element={<ShippingPolicy />} />
+        <Route path="/size-guide" element={<SizeGuide />} />
+        <Route path="/payment-guide" element={<PaymentGuide />} />
+        <Route path="/exchange-policy" element={<ExchangePolicy />} />
+        <Route path="/purchase-guide" element={<PurchaseGuide />} />
+        <Route
+          path="/request-otp"
+          element={<RequestOtpPage setEmailForOtp={setEmailForOtp} />}
+        />
+        <Route
+          path="/change-password"
+          element={<ChangePasswordPage email={emailForOtp} />}
+        />
         <Route
           path="/checkout"
           element={<CheckoutPage cart={cart} setCart={setCart} />}
@@ -128,7 +165,10 @@ const AppContent = ({ cart, setCart, emailForOtp, setEmailForOtp }) => {
           <Route path="/admin/add-product" element={<AddProduct />} />
           <Route path="/admin/customers" element={<CustomerManagement />} />
           <Route path="/admin/category" element={<CategoryManagement />} />
-          <Route path="/admin/category-products/:id" element={<CategoryProductsPage />} />
+          <Route
+            path="/admin/category-products/:id"
+            element={<CategoryProductsPage />}
+          />
           <Route path="/admin/add-category" element={<AddCategory />} />
           <Route path="/admin/edit-category/:id" element={<EditCategory />} />
           <Route
@@ -140,18 +180,10 @@ const AppContent = ({ cart, setCart, emailForOtp, setEmailForOtp }) => {
             element={<RequestOtpPage setEmailForOtp={setEmailForOtp} />}
           />
           <Route
-            path="/change-password"
+            path="/admin/change-password"
             element={<ChangePasswordPage email={emailForOtp} />}
           />
         </Route>
-        <Route
-          path="/request-otp"
-          element={<RequestOtpPage setEmailForOtp={setEmailForOtp} />}
-        />
-        <Route
-          path="/change-password"
-          element={<ChangePasswordPage email={emailForOtp} />}
-        />
       </Routes>
       {!isAdminRoute && !isNotFound && <Footer />}{" "}
       {/* Hiển thị Footer nếu không phải admin */}

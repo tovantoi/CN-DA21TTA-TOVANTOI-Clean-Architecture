@@ -3,11 +3,10 @@ import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import Swal from "sweetalert2";
 import { FaSearch, FaUserCircle, FaShoppingCart } from "react-icons/fa";
-import { AiOutlineHome, AiOutlineUnorderedList } from "react-icons/ai";
-
 const Header = ({ cart }) => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
+  const [activeItem, setActiveItem] = useState("");
   const [error, setError] = useState("");
   const [user, setUser] = useState(null);
 
@@ -18,18 +17,15 @@ const Header = ({ cart }) => {
       padding: "3em",
       color: "#716add",
       background: "#fff",
-      backdrop: `
-                    rgba(0,0,123,0.4)
-                    url("/assets/loading.png")
-                    left top
-                    no-repeat
-                  `,
-      allowOutsideClick: false, // Ngăn người dùng đóng alert bằng cách click bên ngoài
+      backdrop: `rgba(0,0,123,0.4) url("/assets/loading.png") left top no-repeat`,
+      allowOutsideClick: false,
       showConfirmButton: false,
     });
+
     const timeoutId = setTimeout(() => {
       swalInstance.close();
     }, 1000);
+
     try {
       const userData = localStorage.getItem("user");
 
@@ -43,6 +39,11 @@ const Header = ({ cart }) => {
       setUser(null);
     }
   }, []);
+
+  const handleMenuClick = (item) => {
+    setActiveItem(item); // Cập nhật trạng thái mục được chọn
+  };
+
   const handleSearch = async () => {
     if (!searchQuery.trim()) {
       setError("Vui lòng nhập từ khóa tìm kiếm!");
@@ -55,12 +56,7 @@ const Header = ({ cart }) => {
         padding: "3em",
         color: "#716add",
         background: "#fff",
-        backdrop: `
-                      rgba(0,0,123,0.4)
-                      url("/assets/loading.png")
-                      left top
-                      no-repeat
-                    `,
+        backdrop: `rgba(0,0,123,0.4) url("/assets/loading.png") left top no-repeat`,
       });
       const response = await fetch(
         `https://localhost:7022/minimal/api/get-name-product?productname=${encodeURIComponent(
@@ -71,7 +67,6 @@ const Header = ({ cart }) => {
       if (!response.ok) {
         if (response.status === 404) {
           setError("Không tìm thấy sản phẩm nào phù hợp.");
-          swalInstance.close();
         } else {
           throw new Error("Đã xảy ra lỗi khi tìm kiếm. Vui lòng thử lại.");
         }
@@ -98,7 +93,6 @@ const Header = ({ cart }) => {
 
   const handleLogout = async () => {
     try {
-      // Lấy thông tin vai trò từ localStorage
       const user = JSON.parse(localStorage.getItem("user"));
       const role = user?.role;
 
@@ -109,7 +103,7 @@ const Header = ({ cart }) => {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ role }), // Gửi vai trò cho API
+          body: JSON.stringify({ role }),
         }
       );
 
@@ -122,10 +116,7 @@ const Header = ({ cart }) => {
           icon: "success",
           confirmButtonText: "OK",
         });
-        // Xóa thông tin người dùng khỏi localStorage
         localStorage.removeItem("user");
-
-        // Điều hướng về trang đăng nhập
         navigate("/login");
       } else {
         Swal.fire({
@@ -147,7 +138,7 @@ const Header = ({ cart }) => {
   };
 
   const showConfirmDialog = (e) => {
-    e.preventDefault(); // Ngăn chặn hành động mặc định của thẻ <a>
+    e.preventDefault();
 
     Swal.fire({
       title: "Bạn có chắc muốn đăng xuất?",
@@ -158,166 +149,173 @@ const Header = ({ cart }) => {
       cancelButtonText: "Hủy",
     }).then((result) => {
       if (result.isConfirmed) {
-        handleLogout(); // Gọi hàm đăng xuất khi người dùng xác nhận
+        handleLogout();
       }
     });
   };
 
   return (
-    <header className="bg-white shadow-sm">
+    <header className="bg-light shadow-sm">
       <div className="container d-flex justify-content-between align-items-center py-3">
         <div className="logo animated-logo">
           <Link to="/">
-            <img
+            <motion.img
               src="/assets/logoo.png"
               alt="Logo"
               className="me-2"
               style={{
-                height: "80px",
+                height: "60px",
                 borderRadius: "5px",
-                borderTopRightRadius: "50px",
                 paddingRight: "10px",
+              }}
+              initial={{ opacity: 0, scale: 0, rotate: -90 }} // Hiệu ứng khi xuất hiện: Mờ, nhỏ và xoay
+              animate={{
+                opacity: 1, // Hiển thị rõ ràng
+                scale: [1, 1.2, 1], // Phóng to nhẹ rồi trở về kích thước ban đầu
+                rotate: 0, // Quay về góc bình thường
+              }}
+              transition={{
+                duration: 1.5, // Thời gian hiệu ứng
+                ease: "easeOut", // Làm mềm chuyển động
+              }}
+              whileHover={{
+                scale: 1.1, // Phóng to nhẹ khi hover
+                rotate: [0, 5, -5, 0], // Lắc nhẹ khi hover
+                boxShadow: "0px 0px 15px rgba(0, 0, 255, 0.5)", // Thêm bóng xanh khi hover
               }}
             />
           </Link>
-          <Link to="/" className="text-decoration-none fs-3">
+          <Link to="/" className="text-decoration-none fs-3 text-dark">
             <motion.span
               className="logo-text"
-              initial={{ opacity: 0, scale: 0 }}
+              initial={{ opacity: 0, scale: 0, rotate: -90 }} // Xuất hiện từ nhỏ, quay 90 độ
               animate={{
-                opacity: 1, // Logo sẽ xuất hiện rõ ràng
-                scale: 1, // Phóng to logo khi xuất hiện
-                rotate: [0, 15, -15, 0], // Thêm hiệu ứng quay nhẹ
-                x: [15, 10, -10, -15], // Thêm hiệu ứng lắc lư (xây qua lại)
+                opacity: 1,
+                scale: [1, 1.1, 1],
+                rotate: 0,
+                textShadow: "0px 0px 5px rgba(255, 255, 255, 0.5)",
               }}
               transition={{
-                duration: 1,
-                delay: 0, // Delay 1 giây trước khi hiệu ứng bắt đầu
-                repeat: Infinity, // Lặp lại vô hạn
-                repeatType: "reverse", // Lặp lại theo chiều ngược lại
-                repeatDelay: 5, // Thời gian nghỉ giữa các lần lặp (10 giây)
-                ease: "easeInOut",
+                duration: 1.5, // Thời gian hoàn thành hiệu ứng
+                delay: 0.5, // Chậm trễ 0.5 giây
+                ease: "easeOut", // Làm mượt hiệu ứng
+              }}
+              whileHover={{
+                scale: 1.2, // Phóng to khi hover
+                textShadow: "0px 0px 10px rgba(255, 255, 255, 1)", // Phát sáng khi hover
               }}
               style={{
-                display: "inline-block",
                 fontWeight: "bold",
-                background: "linear-gradient(45deg, #ff6ec7, #ff9000)", // Gradient cho chữ
-                WebkitBackgroundClip: "text",
-                backgroundClip: "text",
                 textTransform: "uppercase",
+                background: "linear-gradient(90deg, #ff6ec7, #f9d423, #1e90ff)", // Gradient màu
+                WebkitBackgroundClip: "text", // Chỉ áp dụng gradient cho chữ
+                WebkitTextFillColor: "transparent", // Làm chữ trong suốt
+                textShadow: "0px 0px 2px rgba(255, 255, 255, 0.3)", // Ánh sáng nhẹ
+                fontSize: "2rem", // Tăng kích thước chữ
+                display: "inline-block",
               }}
             >
               SHOP <b>VANTOI</b>
             </motion.span>
           </Link>
         </div>
-
         <nav>
           <ul className="nav">
             <li className="nav-item">
-              <a href="/products" className="nav-link">
-                <b>Sản phẩm</b>
-              </a>
+              <Link
+                to="/products"
+                className={`nav-link ${
+                  activeItem === "products" ? "active" : ""
+                }`}
+                onClick={() => handleMenuClick("products")}
+              >
+                Sản phẩm
+              </Link>
             </li>
             <li className="nav-item">
-              <a href="/phukien" className="nav-link">
-                <b>Phụ kiện</b>
-              </a>
+              <Link
+                to="/phukien"
+                className={`nav-link ${
+                  activeItem === "phukien" ? "active" : ""
+                }`}
+                onClick={() => handleMenuClick("phukien")}
+              >
+                Phụ kiện
+              </Link>
             </li>
             <li className="nav-item">
-              <a href="/blogpage" className="nav-link">
-                <b>Blog</b>
-              </a>
+              <Link
+                to="/blogpage"
+                className={`nav-link ${
+                  activeItem === "blogpage" ? "active" : ""
+                }`}
+                onClick={() => handleMenuClick("blogpage")}
+              >
+                Blog
+              </Link>
             </li>
             <li className="nav-item">
-              <a href="/contact" className="nav-link">
-                <b>Liên hệ</b>
-              </a>
+              <Link
+                to="/contact"
+                className={`nav-link ${
+                  activeItem === "contact" ? "active" : ""
+                }`}
+                onClick={() => handleMenuClick("contact")}
+              >
+                Liên hệ
+              </Link>
             </li>
           </ul>
         </nav>
 
         <div className="d-flex align-items-center">
-          <input
-            type="text"
-            className={`form-control me-2 ${error ? "is-invalid" : ""}`}
-            placeholder="Bạn tìm gì?"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            onKeyPress={handleKeyPress}
-          />
-          <button className="btn btn-dark" onClick={handleSearch}>
-            <FaSearch size={20} style={{ color: "blue" }} />
-          </button>
-          {error && <div className="invalid-feedback">{error}</div>}
+          <motion.div
+            className="d-flex align-items-center"
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{
+              duration: 0.5,
+              ease: "easeOut",
+            }}
+          >
+            <motion.input
+              type="text"
+              className={`form-control me-2 ${error ? "is-invalid" : ""}`}
+              placeholder="Bạn tìm gì?"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              onKeyPress={handleKeyPress}
+              whileFocus={{
+                borderColor: "#1e90ff", // Màu viền xanh khi focus
+                boxShadow: "0px 0px 8px rgba(30, 144, 255, 0.6)", // Hiệu ứng ánh sáng khi focus
+                scale: 1.02, // Phóng to nhẹ khi focus
+              }}
+              animate={{
+                x: error ? [0, -10, 10, 0] : 0, // Lắc nhẹ khi có lỗi
+                borderColor: error ? "#dc3545" : "#ccc", // Màu viền đỏ khi lỗi
+              }}
+              transition={{
+                x: { type: "spring", stiffness: 100 }, // Hiệu ứng lắc mềm mại
+                duration: 0.5,
+              }}
+              style={{
+                padding: "8px 12px",
+                borderRadius: "5px",
+                outline: "none",
+                borderWidth: "1px",
+              }}
+            />
+          </motion.div>
 
-          <div className="account-dropdown position-relative ms-3">
-            <button className="btn btn-light">
-              <span role="img" aria-label="account">
-                <FaUserCircle
-                  color="blue"
-                  size={40}
-                  style={{ marginRight: "8px" }}
-                />
-              </span>
-            </button>
-            <ul
-              className="dropdown-menu position-absolute bg-white shadow"
-              style={{ right: 0, top: "100%", zIndex: 1000 }}
-            >
-              {user ? (
-                <>
-                  <li>
-                    <Link to="/my-orders" className="dropdown-item">
-                      Đơn hàng của bạn
-                    </Link>
-                  </li>
-                  <li>
-                    <Link to="/my-account" className="dropdown-item">
-                      Tài khoản của tôi
-                    </Link>
-                  </li>
-                  <li>
-                    <Link to="/request-otp" className="dropdown-item">
-                      Thay đổi mật khẩu
-                    </Link>
-                  </li>
-                  <li>
-                    <a
-                      href="/logout"
-                      className="nav-link"
-                      onClick={showConfirmDialog}
-                    >
-                      <b>Đăng xuất</b>
-                    </a>
-                  </li>
-                </>
-              ) : (
-                <>
-                  <li>
-                    <Link to="/login" className="dropdown-item">
-                      Đăng nhập
-                    </Link>
-                  </li>
-                  <li>
-                    <Link to="/register" className="dropdown-item">
-                      Đăng kí
-                    </Link>
-                  </li>
-                </>
-              )}
-            </ul>
-          </div>
-          <div>
-            <Link to="/cart" className="btn btn-primary position-relative ms-3">
-              <FaShoppingCart
-                color="white"
-                size={20}
-                style={{ marginRight: "8px" }}
-              />
+          <button className="btn btn-primary" onClick={handleSearch}>
+            <FaSearch />
+          </button>
+          <div className="ms-3">
+            <Link to="/cart" className="btn btn-warning position-relative">
+              <FaShoppingCart className="me-2" />
               Giỏ hàng
-              <span className="badge bg-danger position-absolute top-0 start-100 translate-middle">
-                {cart.reduce((total, item) => total + (item.quantity || 1), 0)}
+              <span className="badge bg-danger position-absolute">
+                {cart.length}
               </span>
             </Link>
           </div>

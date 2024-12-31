@@ -1,12 +1,24 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { Carousel } from "bootstrap";
 
 const Banner = () => {
+  useEffect(() => {
+    // Khởi tạo Bootstrap carousel thủ công
+    const carouselElement = document.getElementById("carouselExampleIndicators");
+    if (carouselElement) {
+      new Carousel(carouselElement, {
+        interval: 3000, // Thời gian tự động chuyển slide (ms)
+        ride: "carousel", // Bật tự động chạy
+      });
+    }
+  }, []);
+
   return (
     <div
       id="carouselExampleIndicators"
       className="carousel slide"
       data-bs-ride="carousel"
-      data-bs-interval="3000" // Thời gian giữa các slide
+      data-bs-interval="3000"
     >
       {/* Indicators */}
       <div className="carousel-indicators">
@@ -42,11 +54,11 @@ const Banner = () => {
       <div className="carousel-inner">
         <div className="carousel-item active">
           <img
-            src="/assets/bn1.jpg"
+            src="/assets/mm.jpg"
             className="d-block w-100"
             alt="Slide 1"
             style={{
-              height: "600px",
+              height: "700px",
               objectFit: "cover",
             }}
           />
@@ -57,11 +69,11 @@ const Banner = () => {
         </div>
         <div className="carousel-item">
           <img
-            src="/assets/bn2.jpg"
+            src="/assets/m2.jpg"
             className="d-block w-100"
             alt="Slide 2"
             style={{
-              height: "600px",
+              height: "700px",
               objectFit: "cover",
             }}
           />
@@ -72,11 +84,11 @@ const Banner = () => {
         </div>
         <div className="carousel-item">
           <img
-            src="/assets/bn4.jpg"
+            src="/assets/m3.jpg"
             className="d-block w-100"
             alt="Slide 3"
             style={{
-              height: "600px",
+              height: "700px",
               objectFit: "cover",
             }}
           />
@@ -87,11 +99,11 @@ const Banner = () => {
         </div>
         <div className="carousel-item">
           <img
-            src="/assets/bn5.jpg"
+            src="/assets/m4.jpg"
             className="d-block w-100"
             alt="Slide 4"
             style={{
-              height: "600px",
+              height: "700px",
               objectFit: "cover",
             }}
           />
@@ -102,8 +114,8 @@ const Banner = () => {
         </div>
       </div>
 
-      {/* Navigation Buttons
-      <button
+      {/* Navigation Buttons */}
+      {/* <button
         className="carousel-control-prev"
         type="button"
         data-bs-target="#carouselExampleIndicators"

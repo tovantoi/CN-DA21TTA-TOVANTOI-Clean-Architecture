@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom"; // Import useNavigate
 import { motion } from "framer-motion";
+import Swal from "sweetalert2";
 
 const RequestOtpPage = () => {
   const [email, setEmail] = useState("");
@@ -31,10 +32,12 @@ const RequestOtpPage = () => {
 
       if (response.ok && result.isSuccess) {
         localStorage.setItem("userEmail", email);
-        setSuccess(
-          result.message ||
-            "Mã OTP đã được gửi thành công. Vui lòng kiểm tra email của bạn."
-        );
+        Swal.fire({
+          title: "Gửi mã OTP thành công",
+          text: result.message || "Vui lòng kiểm tra email của bạn!",
+          icon: "success",
+          confirmButtonText: "OK",
+        });
         navigate("/change-password", { state: { email } });
       } else {
         setError(result.message || "Đã xảy ra lỗi. Vui lòng thử lại.");

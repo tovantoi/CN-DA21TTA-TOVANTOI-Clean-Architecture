@@ -1,4 +1,5 @@
-﻿using chuyennganh.Application.Repositories;
+﻿using chuyennganh.Application.App.OrderApp.Handler;
+using chuyennganh.Application.Repositories;
 using chuyennganh.Application.Repositories.CategoryRepo;
 using chuyennganh.Application.Repositories.CouponRepo;
 using chuyennganh.Application.Repositories.CustomerAddressRPRepo;
@@ -42,7 +43,8 @@ namespace chuyennganh.Infrastructure.Extensions
           //  services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped(typeof(IGenericReponsitory<>), typeof(GenericRepository<>));
-          //  services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<LoginCommandHandler>());
+            services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(GetByIdOrderRequestHandler).Assembly));
+            //  services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<LoginCommandHandler>());
             services.Configure<EmailSettings>(configuration.GetSection("EmailSettings"));
             services.AddSingleton<EmailService>();
             return services;

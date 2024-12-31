@@ -4,7 +4,7 @@ using chuyennganh.Application.App.OrderApp.Command;
 using chuyennganh.Application.Repositories.OrderRepo;
 using chuyennganh.Domain.ExceptionEx;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
+
 
 namespace chuyennganh.Application.App.OrderApp.Handler
 {
@@ -21,8 +21,6 @@ namespace chuyennganh.Application.App.OrderApp.Handler
         public async Task<OrderDTO> Handle(GetByIdOrderRequest request, CancellationToken cancellationToken)
         {
             var order = await orderRepository.FindSingleAsync(o => o.Id == request.Id, o => o.OrderItems, o => o.CustomerAddress, o => o.Customer, o => o.Coupon);
-
-
             if (order is null) order.ThrowNotFound();
 
             var orderDto = new OrderDTO

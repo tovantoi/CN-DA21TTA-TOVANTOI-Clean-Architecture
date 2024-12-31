@@ -4,7 +4,8 @@ import { useParams, useNavigate } from "react-router-dom";
 const OrderDetailPage = () => {
   const { orderId } = useParams();
   const navigate = useNavigate();
-  const [order, setOrder] = useState(null);
+  const [order, setOrder] = useState(null); // Dữ liệu từ API
+  const [cachedOrder, setCachedOrder] = useState(null); // Dữ liệu từ localStorage
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -14,6 +15,15 @@ const OrderDetailPage = () => {
       setError("");
 
       try {
+        // Lấy dữ liệu từ localStorage
+        const cachedOrderData = JSON.parse(
+          localStorage.getItem("selectedOrder")
+        );
+        if (cachedOrderData && cachedOrderData.id === parseInt(orderId, 10)) {
+          setCachedOrder(cachedOrderData);
+        }
+
+        // Gọi API để lấy các thông tin khác
         const response = await fetch(
           `https://localhost:7022/minimal/api/get-order-by-id?id=${orderId}`
         );
@@ -21,8 +31,8 @@ const OrderDetailPage = () => {
           throw new Error("Không thể tải chi tiết đơn hàng.");
         }
 
-        const data = await response.json();
-        setOrder(data);
+        const apiData = await response.json();
+        setOrder(apiData);
       } catch (err) {
         setError(err.message || "Có lỗi xảy ra khi tải chi tiết đơn hàng.");
       } finally {
@@ -73,23 +83,25 @@ const OrderDetailPage = () => {
           <h2 className="card-title">Chi tiết đơn hàng</h2>
           <hr />
           {/* <p>
-            <strong>ID:</strong> {order.id}
+            <strong>Họ và tên:</strong> {order.address?.fullName || "N/A"}
           </p> */}
           <p>
-            <strong>Họ và tên:</strong> {order.address.fullName || "N/A"}
+            <strong>Số điện thoại:</strong> {order.address?.phone || "N/A"}
           </p>
           <p>
-            <strong>Số điện thoại:</strong> {order.address.phone || "N/A"}
+            <strong>Địa chỉ:</strong> {order.address?.finalAddress || "N/A"}
           </p>
           <p>
-            <strong>Địa chỉ:</strong> {order.address.finalAddress || "N/A"}
+            <strong>Trạng thái đơn hàng:</strong>{" "}
+            {order.status || "Đang giao hàng"}
           </p>
           <p>
-            <strong>Trạng thái:</strong> {order.status || "N/A"}
+            <strong>Shiper:</strong> {"Nguyễn Xuân Son"}
+            <strong>-</strong>
+            <strong>SĐT:</strong> {"0123456789"}
           </p>
-          <p>
-            <strong>Mã giảm giá đã áp dụng:</strong> {order.coupon || "N/A"}
-          </p>
+          <h4 className="mt-4">Người nhận:</h4>
+          <p>{cachedOrder?.name || "Không có thông tin đơn hàng"}</p>
           <h4 className="mt-4">Sản phẩm:</h4>
           <div className="table-responsive">
             <table className="table table-striped">
@@ -102,37 +114,34 @@ const OrderDetailPage = () => {
                 </tr>
               </thead>
               <tbody>
-                {order.orderItems.map((item, index) => (
-                  <tr key={index}>
-                    <td>
-                      <img
-                        src={
-                          order.orderItems[0]?.imagePath &&
-                          order.orderItems[0]?.imagePath !== "string"
-                            ? `https://localhost:7241/${order.orderItems[0]?.imagePath}`
-                            : "https://via.placeholder.com/400"
-                        }
-                        alt={order.orderItems[0]?.productName}
-                        style={{
-                          width: "80px",
-                          height: "80px",
-                          objectFit: "cover",
-                        }}
-                      />
-                    </td>
-                    <td>{item.productName}</td>
-                    <td>{item.quantity}</td>
-                    <td>{order.totalPrice?.toLocaleString()} VND</td>
-                  </tr>
-                ))}
+                {(cachedOrder?.products || []).map((product, index) => {
+                  const orderItem = order.orderItems[index]; // Tìm sản phẩm tương ứng trong order.orderItems
+                  return (
+                    <tr key={index}>
+                      <td>
+                        <img
+                          src={
+                            product.imagePath && product.imagePath !== "string"
+                              ? `https://localhost:7241/${product.imagePath}`
+                              : "https://via.placeholder.com/400"
+                          }
+                          alt={product.productName || "Sản phẩm"}
+                          style={{
+                            width: "80px",
+                            height: "80px",
+                            objectFit: "cover",
+                          }}
+                        />
+                      </td>
+                      <td>{product.productName || "Tên sản phẩm không có"}</td>
+                      <td>{orderItem?.quantity || 0}</td>
+                      <td>{order.totalPrice?.toLocaleString() || "N/A"} VND</td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
-          {order.coupon && (
-            <p className="mt-3">
-              <strong>Mã giảm giá:</strong> {order.coupon.description || "N/A"}
-            </p>
-          )}
         </div>
       </div>
     </div>

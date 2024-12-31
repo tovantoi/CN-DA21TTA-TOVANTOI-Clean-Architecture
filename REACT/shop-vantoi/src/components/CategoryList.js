@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
+import { motion } from "framer-motion";
+import "../pages/AdminCss/Categorylist.css";
 
 const CategorySearch = () => {
   const [categories, setCategories] = useState([]);
@@ -78,15 +80,25 @@ const CategorySearch = () => {
 
   return (
     <div className="container">
-      <h2>Danh mục</h2>
+      {/* <h2>Danh mục</h2> */}
       {error && <div className="alert alert-danger">{error}</div>}
       <div className="category-list d-flex justify-content-around">
         {categories.map((category) => (
-          <div
+          <motion.div
             className="category-item text-center"
             key={category.id}
             onClick={() => handleCategoryClick(category.id)}
             style={{ cursor: "pointer" }}
+            whileHover={{
+              scale: 1.1, // Phóng to nhẹ
+              backgroundColor: "#455a64", // Đổi màu nền khi hover
+              color: "orange",
+              boxShadow: "0px 4px 15px rgba(0, 0, 0, 0.2)", // Thêm bóng
+            }}
+            transition={{
+              duration: 0.3, // Thời gian thực hiện hiệu ứng
+              ease: "easeInOut", // Làm mượt chuyển động
+            }}
           >
             <img
               src={
@@ -98,38 +110,50 @@ const CategorySearch = () => {
               style={{ width: "100%", height: "250px", objectFit: "cover" }}
             />
             <h4>{category.name}</h4>
-          </div>
+          </motion.div>
         ))}
       </div>
 
       <hr />
 
-      <h2>Sản phẩm</h2>
-      <div className="product-list d-flex flex-wrap">
-        {filteredProducts.length > 0
-          ? filteredProducts.map((product) => (
-              <div
-                className="product-item card m-2"
-                key={product.id}
-                style={{ width: "200px", cursor: "pointer" }}
-                onClick={() => navigate(`/product/${product.id}`)}
-              >
-                <img
-                  src={
-                    product.imagePath && product.imagePath !== "string"
-                      ? `https://localhost:7241/${product.imagePath}`
-                      : "https://via.placeholder.com/400"
-                  }
-                  alt={product.productName}
-                  style={{ width: "100%", height: "250px", objectFit: "cover" }}
-                />
-                <div className="card-body">
-                  <h5>{product.productName}</h5>
-                  <p>{product.discountPrice || product.regularPrice} VND</p>
-                </div>
-              </div>
-            ))
-          : !error && <p>Chọn danh mục để xem sản phẩm.</p>}
+      <div className="product-list">
+        <h2 className="text-center mb-4">Sản phẩm</h2>
+        <div className="grid-container">
+          {filteredProducts.length > 0
+            ? filteredProducts.map((product) => (
+                <motion.div
+                  className="product-item"
+                  key={product.id}
+                  onClick={() => navigate(`/product/${product.id}`)}
+                  style={{ cursor: "pointer" }}
+                  whileHover={{
+                    backgroundColor: "#455a64", // Đổi màu nền khi hover
+                    color: "orange",
+                    scale: 1.1,
+                    boxShadow: "0px 4px 15px rgba(0, 0, 0, 0.2)",
+                  }}
+                  transition={{
+                    duration: 0.3,
+                    ease: "easeInOut",
+                  }}
+                >
+                  <img
+                    className="img-ca"
+                    src={
+                      product.imagePath && product.imagePath !== "string"
+                        ? `https://localhost:7241/${product.imagePath}`
+                        : "https://via.placeholder.com/400"
+                    }
+                    alt={product.productName}
+                  />
+                  <div className="product-details text-center">
+                    <h5>{product.productName}</h5>
+                    <p>{product.discountPrice || product.regularPrice} VND</p>
+                  </div>
+                </motion.div>
+              ))
+            : !error && <p>Chọn danh mục để xem sản phẩm.</p>}
+        </div>
       </div>
     </div>
   );

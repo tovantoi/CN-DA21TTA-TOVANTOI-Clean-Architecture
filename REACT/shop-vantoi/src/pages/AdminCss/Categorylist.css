@@ -1,0 +1,13 @@
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr); /* 5 sản phẩm trên 1 hàng */
+  gap: 20px; /* Khoảng cách giữa các sản phẩm */
+  justify-content: center; /* Căn giữa các sản phẩm */
+}
+
+.img-ca {
+  width: 100%;
+  height: 200px; /* Chiều cao cố định */
+  object-fit: cover; /* Cắt ảnh vừa khung */
+  border-radius: 5px; /* Bo góc nhẹ */
+}
