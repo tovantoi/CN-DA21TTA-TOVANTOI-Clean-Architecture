@@ -96,7 +96,7 @@ const OrderDetailPage = () => {
             {order.status || "Đang giao hàng"}
           </p>
           <p>
-            <strong>Shiper:</strong> {"Nguyễn Xuân Son"}
+            <strong>Shipper:</strong> {"Nguyễn Xuân Son"}
             <strong>-</strong>
             <strong>SĐT:</strong> {"0123456789"}
           </p>

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import emailjs from "@emailjs/browser";
 import { motion } from "framer-motion";
+import Swal from "sweetalert2";
 
 const ContactPage = () => {
   const [formData, setFormData] = useState({
@@ -42,7 +43,13 @@ const ContactPage = () => {
       .then(
         (response) => {
           console.log("SUCCESS!", response.status, response.text);
-          setSuccessMessage("Phản hồi của bạn đã được gửi thành công!");
+          Swal.fire({
+            title: "Phản hồi đã được gửi thành công!",
+            text: response.message || "Cám mơn bạn đã phản hồi!",
+            icon: "success",
+            confirmButtonText: "OK",
+          });
+
           setErrorMessage("");
           setFormData({ name: "", email: "", message: "" }); // Clear form
         },
@@ -63,11 +70,9 @@ const ContactPage = () => {
           duration: 1.2, // Thời gian thực hiện hiệu ứng
           ease: "easeOut", // Làm mềm hiệu ứng
         }}
-        style={
-          {
-            color: "blueviolet"
-          }
-        }
+        style={{
+          color: "blueviolet",
+        }}
         whileHover={{
           scale: 1.1, // Phóng to khi hover
           textShadow: "0px 0px 10px rgba(255, 255, 255, 0.8)", // Ánh sáng khi hover

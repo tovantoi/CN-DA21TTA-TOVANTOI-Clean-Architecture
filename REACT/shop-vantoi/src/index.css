@@ -176,7 +176,7 @@ footer a:hover {
 }
 
 footer .fw-bold {
-  color: #3b2d16; /* Điểm nhấn với màu vàng cam nhạt */
+  color: orange !important; /* Điểm nhấn với màu vàng cam nhạt */
 }
 
 /* Center the login page */
