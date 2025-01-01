@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Swal from "sweetalert2";
+import { motion } from "framer-motion";
 
 const ProductEditPage = () => {
   const { productId } = useParams(); // Lấy productId từ URL
@@ -137,6 +138,28 @@ const ProductEditPage = () => {
   if (error) return <div className="alert alert-danger">{error}</div>;
   return (
     <div className="container mt-4">
+      <motion.button
+        onClick={() => navigate(-1)} // Quay lại trang trước đó
+        className="btn btn-secondary mb-4"
+        initial={{ opacity: 0, x: -100 }} // Nút bắt đầu từ bên trái và mờ
+        animate={{ opacity: 1, x: 0 }} // Nút hiện rõ và về đúng vị trí
+        whileHover={{
+          scale: 1.1, // Phóng to nhẹ khi hover
+          backgroundColor: "blue",
+          color: "#ff5722", // Màu chữ trắng khi hover
+          boxShadow: "0px 5px 15px rgba(0, 0, 0, 0.2)", // Thêm bóng mờ khi hover
+        }}
+        whileTap={{
+          scale: 0.95, // Thu nhỏ nhẹ khi click
+          backgroundColor: "#5a6268", // Đổi màu nền khi click
+        }}
+        transition={{
+          duration: 0.3, // Thời gian thực hiện hiệu ứng
+          ease: "easeInOut", // Làm mượt hiệu ứng
+        }}
+      >
+        ← Quay lại
+      </motion.button>
       <h2>Sửa sản phẩm</h2>
       <form onSubmit={handleSubmit}>
         <div className="col-md-12">

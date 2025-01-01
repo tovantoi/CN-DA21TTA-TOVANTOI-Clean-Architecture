@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
+import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 import Swal from "sweetalert2";
 
 const AddProduct = () => {
@@ -25,6 +27,7 @@ const AddProduct = () => {
 
   const [message, setMessage] = useState("");
   const [errors, setErrors] = useState([]);
+  const navigate = useNavigate();
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -159,6 +162,21 @@ const AddProduct = () => {
           ))}
         </div>
       )}
+      <motion.button
+        className="btn btn-secondary mb-3"
+        onClick={() => navigate("/admin/products")}
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        whileHover={{
+          scale: 1.1,
+          backgroundColor: "blue",
+          color: "#ff5722", // Màu chữ trắng khi hover
+          boxShadow: "0px 5px 15px rgba(0, 0, 0, 0.2)", // Thêm bóng mờ khi hover
+        }}
+        transition={{ duration: 0.3 }}
+      >
+        ← Quay lại
+      </motion.button>
 
       <form onSubmit={handleSubmit} className="row g-3">
         <div className="col-md-6">

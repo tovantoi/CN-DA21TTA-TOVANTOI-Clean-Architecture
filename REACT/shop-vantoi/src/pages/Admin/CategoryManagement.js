@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import Swal from "sweetalert2";
-
+import { useNavigate } from "react-router-dom";
 const CategoryManagement = () => {
   const [categories, setCategories] = useState([]);
   const [error, setError] = useState("");
@@ -63,39 +63,65 @@ const CategoryManagement = () => {
     <div className="container my-4">
       <motion.h1
         className="text-center mb-4"
-        initial={{ opacity: 0, scale: 0.5 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{
-          duration: 1,
-          repeat: Infinity,
-          repeatType: "reverse",
-          repeatDelay: 2,
+        initial={{ opacity: 0, y: -50 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 1, ease: "easeOut" }}
+        whileHover={{
+          scale: 1.1,
+          textShadow: "0px 0px 10px rgba(255, 255, 255, 0.9)",
+          color: "#ff5722",
         }}
         style={{
-          background: "linear-gradient(45deg, #ff6ec7, #ffy900)",
-          color: "red",
-          WebkitBackgroundClip: "text",
-          backgroundClip: "text",
+          fontSize: "2.5rem",
+          fontWeight: "bold",
+          color: "#333",
+          textTransform: "uppercase",
         }}
       >
         Quản lý danh mục
       </motion.h1>
-      {error && <div className="alert alert-danger">{error}</div>}
-      <Link to="/admin/add-category" className="btn btn-primary mb-3">
+      {error && (
+        <motion.div
+          className="alert alert-danger"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5 }}
+        >
+          {error}
+        </motion.div>
+      )}
+      <Link
+        to="/admin/add-category"
+        className="btn btn-primary mb-3"
+        as={motion.a}
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+        transition={{ duration: 0.3 }}
+      >
         Thêm Danh mục
       </Link>
-      <div className="category-list d-flex flex-wrap">
+      <motion.div
+        className="category-list d-flex flex-wrap"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1 }}
+      >
         {categories.map((category) => (
-          <div
+          <motion.div
             className="category-item card m-2"
             key={category.id}
             style={{ width: "200px" }}
+            whileHover={{
+              scale: 1.05,
+              boxShadow: "0px 10px 20px rgba(0, 0, 0, 0.2)",
+            }}
+            transition={{ duration: 0.3 }}
           >
             <Link
               to={`/admin/category-products/${category.id}`}
               style={{ textDecoration: "none", color: "inherit" }}
             >
-              <img
+              <motion.img
                 src={
                   category.imagePath && category.imagePath !== "string"
                     ? `https://localhost:7241/${category.imagePath}`
@@ -107,28 +133,38 @@ const CategoryManagement = () => {
                   height: "250px",
                   objectFit: "cover",
                 }}
+                whileHover={{ scale: 1.1 }}
+                transition={{ duration: 0.3 }}
               />
-              <div className="card-body">
+              <motion.div
+                className="card-body"
+                whileHover={{ color: "#ff5722" }}
+              >
                 <h5>{category.name}</h5>
-              </div>
+              </motion.div>
             </Link>
-            <div className="card-body">
+            <div className="card-body d-flex justify-content-around">
               <Link
                 to={`/admin/edit-category/${category.id}`}
                 className="btn btn-warning m-1"
+                as={motion.a}
+                whileHover={{ scale: 1.1, backgroundColor: "#ffc107" }}
+                whileTap={{ scale: 0.95 }}
               >
                 Chỉnh sửa
               </Link>
-              <button
+              <motion.button
                 onClick={() => handleDelete(category.id, category.name)}
                 className="btn btn-danger m-1"
+                whileHover={{ scale: 1.1, backgroundColor: "#e53935" }}
+                whileTap={{ scale: 0.95 }}
               >
                 Xóa
-              </button>
+              </motion.button>
             </div>
-          </div>
+          </motion.div>
         ))}
-      </div>
+      </motion.div>
     </div>
   );
 };

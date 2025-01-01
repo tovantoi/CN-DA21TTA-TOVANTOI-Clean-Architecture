@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Swal from "sweetalert2";
+import { motion } from "framer-motion";
 
 const UpdateCategory = () => {
   const { id } = useParams();
@@ -11,23 +12,22 @@ const UpdateCategory = () => {
     parentId: null,
     isActive: true,
     imageData: null,
-    imagePath: "", // Thêm imagePath để chứa đường dẫn hình ảnh cũ
+    imagePath: "",
   });
 
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
 
-  // Fetch category data when the component is mounted
   useEffect(() => {
     const fetchCategoryData = async () => {
       try {
         const response = await fetch(
           `https://localhost:7022/minimal/api/get-category-by-id?id=${id}`
         );
-        if (!response.ok) throw new Error("Không thể tải thông tin sản phẩm.");
+        if (!response.ok) throw new Error("Không thể tải thông tin danh mục.");
         const data = await response.json();
-        setCategory(data); // Cập nhật state sản phẩm
+        setCategory(data);
       } catch (err) {
         setError(err.message);
       } finally {
@@ -38,7 +38,6 @@ const UpdateCategory = () => {
     fetchCategoryData();
   }, [id]);
 
-  // Handle form input change
   const handleChange = (e) => {
     const { name, value } = e.target;
     setCategory((prevState) => ({
@@ -47,7 +46,6 @@ const UpdateCategory = () => {
     }));
   };
 
-  // Handle file input change (this is where we handle image selection)
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -55,14 +53,13 @@ const UpdateCategory = () => {
       reader.onloadend = () => {
         setCategory((prevState) => ({
           ...prevState,
-          imageData: reader.result, // Update the imageData to show the selected image
+          imageData: reader.result,
         }));
       };
       reader.readAsDataURL(file);
     }
   };
 
-  // Submit the form
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -89,7 +86,7 @@ const UpdateCategory = () => {
       if (response.ok && result.isSuccess) {
         Swal.fire({
           title: "Chỉnh sửa danh mục thành công!",
-          text: result.message || "Chào mừng bạn!",
+          text: result.message || "Danh mục đã được cập nhật!",
           icon: "success",
           confirmButtonText: "OK",
         });
@@ -97,12 +94,12 @@ const UpdateCategory = () => {
           navigate("/admin/category");
         }, 1500);
       } else {
-        setError("Error updating category");
+        setError("Không thể cập nhật danh mục.");
       }
     } catch (err) {
       Swal.fire({
         title: "Chỉnh sửa danh mục thất bại!",
-        text: err.message || "Chào mừng bạn!",
+        text: err.message || "Đã xảy ra lỗi khi cập nhật danh mục.",
         icon: "error",
         confirmButtonText: "OK",
       });
@@ -112,14 +109,22 @@ const UpdateCategory = () => {
   };
 
   return (
-    <div>
-      <h2>Update Category</h2>
+    <div className="container mt-4">
+      <motion.button
+        className="btn btn-secondary mb-4"
+        onClick={() => navigate("/admin/category")}
+        whileHover={{ scale: 1.1 }}
+        whileTap={{ scale: 0.9 }}
+      >
+        ← Quay lại
+      </motion.button>
+      <h2 className="text-center">Chỉnh sửa danh mục</h2>
       {message && <div className="alert alert-success">{message}</div>}
       {error && <div className="alert alert-danger">{error}</div>}
 
       <form onSubmit={handleSubmit}>
         <div className="form-group">
-          <label htmlFor="name">Name</label>
+          <label htmlFor="name">Tên danh mục</label>
           <input
             type="text"
             id="name"
@@ -132,7 +137,7 @@ const UpdateCategory = () => {
         </div>
 
         <div className="form-group">
-          <label htmlFor="description">Description</label>
+          <label htmlFor="description">Mô tả</label>
           <textarea
             id="description"
             name="description"
@@ -144,7 +149,7 @@ const UpdateCategory = () => {
         </div>
 
         <div className="form-group">
-          <label htmlFor="parentId">Parent ID</label>
+          <label htmlFor="parentId">Danh mục cha</label>
           <input
             type="number"
             id="parentId"
@@ -155,17 +160,12 @@ const UpdateCategory = () => {
           />
         </div>
 
-        {/* Hiển thị hình ảnh cũ nếu có */}
         {category.imagePath && !category.imageData && (
           <div className="form-group">
-            <label>Current Image</label>
+            <label>Hình ảnh hiện tại</label>
             <div>
               <img
-                src={
-                  category.imagePath && category.imagePath !== "string"
-                    ? `https://localhost:7241/${category.imagePath}`
-                    : "https://via.placeholder.com/400"
-                }
+                src={`https://localhost:7241/${category.imagePath}`}
                 alt={category.name}
                 style={{ width: "150px", height: "150px", objectFit: "cover" }}
               />
@@ -174,7 +174,7 @@ const UpdateCategory = () => {
         )}
 
         <div className="form-group">
-          <label htmlFor="imageData">Category Image</label>
+          <label htmlFor="imageData">Hình ảnh danh mục</label>
           <input
             type="file"
             id="imageData"
@@ -183,22 +183,20 @@ const UpdateCategory = () => {
             className="form-control"
           />
         </div>
-        {/* Hiển thị hình ảnh mới khi người dùng chọn ảnh mới */}
+
         {category.imageData && (
           <div className="mb-3">
-            <div className="d-flex align-items-center">
-              <img
-                src={category.imageData}
-                alt={category.name || "Ảnh sản phẩm"}
-                className="img-thumbnail me-3"
-                style={{ width: "150px", height: "150px", objectFit: "cover" }}
-              />
-              <span className="text-muted">Hình ảnh xem trước</span>
-            </div>
+            <img
+              src={category.imageData}
+              alt={category.name || "Ảnh sản phẩm"}
+              className="img-thumbnail"
+              style={{ width: "150px", height: "150px", objectFit: "cover" }}
+            />
           </div>
         )}
+
         <div className="form-group">
-          <label htmlFor="isActive">Active</label>
+          <label htmlFor="isActive">Kích hoạt</label>
           <input
             type="checkbox"
             id="isActive"
@@ -212,10 +210,13 @@ const UpdateCategory = () => {
             className="form-check-input"
           />
         </div>
-        <br />
 
-        <button type="submit" className="btn btn-primary" disabled={loading}>
-          {loading ? "Updating..." : "Update Category"}
+        <button
+          type="submit"
+          className="btn btn-primary mt-3"
+          disabled={loading}
+        >
+          {loading ? "Đang cập nhật..." : "Cập nhật danh mục"}
         </button>
       </form>
     </div>

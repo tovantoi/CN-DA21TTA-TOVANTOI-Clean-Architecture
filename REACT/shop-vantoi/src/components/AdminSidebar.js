@@ -5,7 +5,14 @@ import { Navbar, Nav } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import Swal from "sweetalert2";
-import { FaHome, FaListAlt, FaBoxOpen, FaUserFriends, FaKey, FaSignOutAlt } from "react-icons/fa"; // Import icons
+import {
+  FaHome,
+  FaListAlt,
+  FaBoxOpen,
+  FaUserFriends,
+  FaKey,
+  FaSignOutAlt,
+} from "react-icons/fa"; // Import icons
 
 const AdminSidebar = () => {
   const navigate = useNavigate();
@@ -77,7 +84,28 @@ const AdminSidebar = () => {
   };
   return (
     <div className="admin-sidebar">
-      <h2>Admin Dashboard</h2>
+      <motion.h2
+        initial={{ opacity: 0, scale: 0.8, y: -50 }} // Xuất hiện từ nhỏ, dịch xuống
+        animate={{ opacity: 1, scale: 1, y: 0 }} // Phóng to về kích thước ban đầu
+        transition={{
+          duration: 1, // Thời gian chuyển động
+          ease: "easeOut", // Làm mượt
+        }}
+        whileHover={{
+          scale: 1.1, // Phóng to khi hover
+          textShadow: "0px 0px 10px rgba(255, 255, 255, 0.8)", // Ánh sáng khi hover
+          color: "#4caf50", // Màu xanh lá khi hover
+        }}
+        style={{
+          fontSize: "1.5rem",
+          fontWeight: "bold",
+          textTransform: "uppercase",
+          textAlign: "center",
+          color: "#ffffff",
+        }}
+      >
+        Admin Dashboard
+      </motion.h2>
       <ul className="navbar-nav">
         <li className="nav-item">
           <NavLink
@@ -87,7 +115,8 @@ const AdminSidebar = () => {
               isActive ? "nav-link active" : "nav-link"
             }
           >
-            <FaHome style={{ marginRight: "8px" }} />TRANG CHỦ
+            <FaHome style={{ marginRight: "8px" }} />
+            TRANG CHỦ
           </NavLink>
         </li>
         <li className="nav-item">
@@ -97,7 +126,8 @@ const AdminSidebar = () => {
               isActive ? "nav-link active" : "nav-link"
             }
           >
-           <FaListAlt style={{ marginRight: "8px" }} />QUẢN LÍ DANH MỤC
+            <FaListAlt style={{ marginRight: "8px" }} />
+            QUẢN LÍ DANH MỤC
           </NavLink>
         </li>
         <li className="nav-item">
@@ -107,7 +137,8 @@ const AdminSidebar = () => {
               isActive ? "nav-link active" : "nav-link"
             }
           >
-             <FaBoxOpen style={{ marginRight: "8px" }} />QUẢN LÍ SẢN PHẨM
+            <FaBoxOpen style={{ marginRight: "8px" }} />
+            QUẢN LÍ SẢN PHẨM
           </NavLink>
         </li>
         <li className="nav-item">
@@ -117,7 +148,8 @@ const AdminSidebar = () => {
               isActive ? "nav-link active" : "nav-link"
             }
           >
-             <FaUserFriends style={{ marginRight: "8px" }} />QUẢN LÍ KHÁCH HÀNG
+            <FaUserFriends style={{ marginRight: "8px" }} />
+            QUẢN LÍ KHÁCH HÀNG
           </NavLink>
         </li>
         <li className="nav-item">
@@ -127,14 +159,24 @@ const AdminSidebar = () => {
               isActive ? "nav-link active" : "nav-link"
             }
           >
-             <FaKey style={{ marginRight: "8px" }} />THAY ĐỔI MẬT KHẨU
+            <FaKey style={{ marginRight: "8px" }} />
+            THAY ĐỔI MẬT KHẨU
           </NavLink>
         </li>
         <li className="nav-item">
           <a href="/logout" className="nav-link" onClick={showConfirmDialog}>
-          <FaSignOutAlt style={{ marginRight: "8px" }} /><b>ĐĂNG XUẤT</b>
+            <FaSignOutAlt style={{ marginRight: "8px" }} />
+            <b>ĐĂNG XUẤT</b>
           </a>
         </li>
+        <button
+          className="admin-sidebar-toggle"
+          onClick={() =>
+            document.querySelector(".admin-sidebar").classList.toggle("active")
+          }
+        >
+          ☰
+        </button>
       </ul>
     </div>
   );

@@ -1,7 +1,6 @@
 import React from "react";
 import { Outlet } from "react-router-dom";
-import AdminSidebar from "./AdminSidebar";
-import "../pages/AdminCss/AdminLayout.css"; // Đảm bảo có CSS cơ bản
+import AdminSidebar from "./AdminSidebar"; // Đảm bảo có CSS cơ bản
 
 const AdminLayout = () => {
   return (

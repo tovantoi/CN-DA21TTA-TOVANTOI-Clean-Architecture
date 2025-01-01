@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import Swal from "sweetalert2";
 import { FaSearch, FaUserCircle, FaShoppingCart } from "react-icons/fa";
+
 const Header = ({ cart }) => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
@@ -41,7 +42,7 @@ const Header = ({ cart }) => {
   }, []);
 
   const handleMenuClick = (item) => {
-    setActiveItem(item); // Cập nhật trạng thái mục được chọn
+    setActiveItem(item);
   };
 
   const handleSearch = async () => {
@@ -168,27 +169,27 @@ const Header = ({ cart }) => {
                 borderRadius: "5px",
                 paddingRight: "10px",
               }}
-              initial={{ opacity: 0, scale: 0, rotate: -90 }} // Hiệu ứng khi xuất hiện: Mờ, nhỏ và xoay
+              initial={{ opacity: 0, scale: 0, rotate: -90 }}
               animate={{
-                opacity: 1, // Hiển thị rõ ràng
-                scale: [1, 1.2, 1], // Phóng to nhẹ rồi trở về kích thước ban đầu
-                rotate: 0, // Quay về góc bình thường
+                opacity: 1,
+                scale: [1, 1.2, 1],
+                rotate: 0,
               }}
               transition={{
-                duration: 1.5, // Thời gian hiệu ứng
-                ease: "easeOut", // Làm mềm chuyển động
+                duration: 1.5,
+                ease: "easeOut",
               }}
               whileHover={{
-                scale: 1.1, // Phóng to nhẹ khi hover
-                rotate: [0, 5, -5, 0], // Lắc nhẹ khi hover
-                boxShadow: "0px 0px 15px rgba(0, 0, 255, 0.5)", // Thêm bóng xanh khi hover
+                scale: 1.1,
+                rotate: [0, 5, -5, 0],
+                boxShadow: "0px 0px 15px rgba(0, 0, 255, 0.5)",
               }}
             />
           </Link>
           <Link to="/" className="text-decoration-none fs-3 text-dark">
             <motion.span
               className="logo-text"
-              initial={{ opacity: 0, scale: 0, rotate: -90 }} // Xuất hiện từ nhỏ, quay 90 độ
+              initial={{ opacity: 0, scale: 0, rotate: -90 }}
               animate={{
                 opacity: 1,
                 scale: [1, 1.1, 1],
@@ -196,22 +197,22 @@ const Header = ({ cart }) => {
                 textShadow: "0px 0px 5px rgba(255, 255, 255, 0.5)",
               }}
               transition={{
-                duration: 1.5, // Thời gian hoàn thành hiệu ứng
-                delay: 0.5, // Chậm trễ 0.5 giây
-                ease: "easeOut", // Làm mượt hiệu ứng
+                duration: 1.5,
+                delay: 0.5,
+                ease: "easeOut",
               }}
               whileHover={{
-                scale: 1.2, // Phóng to khi hover
-                textShadow: "0px 0px 10px rgba(255, 255, 255, 1)", // Phát sáng khi hover
+                scale: 1.2,
+                textShadow: "0px 0px 10px rgba(255, 255, 255, 1)",
               }}
               style={{
                 fontWeight: "bold",
                 textTransform: "uppercase",
-                background: "linear-gradient(90deg, #ff6ec7, #f9d423, #1e90ff)", // Gradient màu
-                WebkitBackgroundClip: "text", // Chỉ áp dụng gradient cho chữ
-                WebkitTextFillColor: "transparent", // Làm chữ trong suốt
-                textShadow: "0px 0px 2px rgba(255, 255, 255, 0.3)", // Ánh sáng nhẹ
-                fontSize: "2rem", // Tăng kích thước chữ
+                background: "linear-gradient(90deg, #ff6ec7, #f9d423, #1e90ff)",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                textShadow: "0px 0px 2px rgba(255, 255, 255, 0.3)",
+                fontSize: "2rem",
                 display: "inline-block",
               }}
             >
@@ -286,16 +287,16 @@ const Header = ({ cart }) => {
               onChange={(e) => setSearchQuery(e.target.value)}
               onKeyPress={handleKeyPress}
               whileFocus={{
-                borderColor: "#1e90ff", // Màu viền xanh khi focus
-                boxShadow: "0px 0px 8px rgba(30, 144, 255, 0.6)", // Hiệu ứng ánh sáng khi focus
-                scale: 1.02, // Phóng to nhẹ khi focus
+                borderColor: "#1e90ff",
+                boxShadow: "0px 0px 8px rgba(30, 144, 255, 0.6)",
+                scale: 1.02,
               }}
               animate={{
-                x: error ? [0, -10, 10, 0] : 0, // Lắc nhẹ khi có lỗi
-                borderColor: error ? "#dc3545" : "#ccc", // Màu viền đỏ khi lỗi
+                x: error ? [0, -10, 10, 0] : 0,
+                borderColor: error ? "#dc3545" : "#ccc",
               }}
               transition={{
-                x: { type: "spring", stiffness: 100 }, // Hiệu ứng lắc mềm mại
+                x: { type: "spring", stiffness: 100 },
                 duration: 0.5,
               }}
               style={{
@@ -310,6 +311,61 @@ const Header = ({ cart }) => {
           <button className="btn btn-primary" onClick={handleSearch}>
             <FaSearch />
           </button>
+          <div className="account-dropdown position-relative ms-3">
+            <button className="btn btn-light">
+              <span role="img" aria-label="account">
+                <FaUserCircle
+                  color="blue"
+                  size={40}
+                  style={{ marginRight: "8px" }}
+                />
+              </span>
+            </button>
+            <ul className="dropdown-menu">
+              {user ? (
+                <>
+                  <li>
+                    <Link to="/my-orders" className="dropdown-item">
+                      Đơn hàng của bạn
+                    </Link>
+                  </li>
+                  <li>
+                    <Link to="/my-account" className="dropdown-item">
+                      Tài khoản của tôi
+                    </Link>
+                  </li>
+                  <li>
+                    <Link to="/request-otp" className="dropdown-item">
+                      Thay đổi mật khẩu
+                    </Link>
+                  </li>
+                  <li>
+                    <a
+                      href="/logout"
+                      className="dropdown-item"
+                      onClick={showConfirmDialog}
+                    >
+                      <b>Đăng xuất</b>
+                    </a>
+                  </li>
+                </>
+              ) : (
+                <>
+                  <li>
+                    <Link to="/login" className="dropdown-item">
+                      Đăng nhập
+                    </Link>
+                  </li>
+                  <li>
+                    <Link to="/register" className="dropdown-item">
+                      Đăng kí
+                    </Link>
+                  </li>
+                </>
+              )}
+            </ul>
+          </div>
+
           <div className="ms-3">
             <Link to="/cart" className="btn btn-warning position-relative">
               <FaShoppingCart className="me-2" />

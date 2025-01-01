@@ -5,18 +5,18 @@
 
 .admin-sidebar {
   width: 250px;
-  background-color: #343a40; /* Darker color for a professional look */
-  color: #fff;
+  background-color: #2e3a46; /* Màu nền xám xanh dịu mắt */
+  color: #f1f1f1;
   min-height: 100vh;
   padding: 20px;
-  border-right: 2px solid #dee2e6; /* Subtle border for separation */
-  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1); /* Shadow effect for depth */
+  border-right: 1px solid #39424e; /* Đường viền tinh tế */
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2); /* Bóng cho chiều sâu */
 }
 
 .admin-content {
   flex: 1;
   padding: 20px;
-  background-color: #f8f9fa; /* Lighter background for the content area */
+  background-color: #f0f4f8; /* Màu nền sáng nhẹ */
 }
 
 /* Sidebar header */
@@ -25,8 +25,10 @@
   margin-bottom: 30px;
   font-weight: bold;
   text-transform: uppercase;
-  color: #f8f9fa;
+  color: #ffffff; /* Chữ trắng nổi bật */
   text-align: center;
+  border-bottom: 2px solid #4caf50; /* Gạch chân với màu xanh lá */
+  padding-bottom: 10px;
 }
 
 /* Sidebar links */
@@ -36,28 +38,46 @@
 }
 
 .admin-sidebar ul li {
-  margin-bottom: 15px;
+  margin-bottom: 20px;
 }
 
 .admin-sidebar ul li a {
-  color: #adb5bd; /* Soft light color for normal links */
+  color: #d1d5db; /* Màu chữ xám nhạt */
   text-decoration: none;
   font-size: 1.1rem;
-  padding: 10px;
-  border-radius: 4px;
+  padding: 12px 15px;
+  border-radius: 6px;
   display: block;
-  transition: background-color 0.3s ease, color 0.3s ease;
+  transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s;
 }
 
 .admin-sidebar ul li a.active,
 .admin-sidebar ul li a:hover {
-  color: #fff; /* Highlighted color */
-  background-color: #007bff; /* Bootstrap primary color for hover and active */
-  font-weight: 500; /* Emphasize active link */
+  color: #ffffff; /* Chữ trắng nổi bật */
+  background: linear-gradient(
+    90deg,
+    #4caf50,
+    #2e7d32
+  ); /* Hiệu ứng màu gradient */
+  font-weight: 600; /* Làm đậm chữ */
+  transform: scale(1.05); /* Phóng to nhẹ khi hover */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); /* Bóng mượt */
 }
 
 .admin-sidebar ul li a.active {
-  background-color: #0056b3; /* Darker blue for active link */
+  background: linear-gradient(90deg, #388e3c, #1b5e20); /* Gradient đậm hơn */
+}
+
+/* Sidebar icons */
+.admin-sidebar ul li a svg {
+  margin-right: 10px;
+  vertical-align: middle;
+  font-size: 1.5rem;
+  transition: transform 0.3s ease;
+}
+
+.admin-sidebar ul li a:hover svg {
+  transform: rotate(10deg); /* Hiệu ứng xoay biểu tượng khi hover */
 }
 
 /* Mobile responsiveness */
@@ -68,13 +88,12 @@
     z-index: 1000;
     height: 100vh;
     top: 0;
-    left: 0;
-    display: none; /* Hidden by default on smaller screens */
-    background-color: #343a40;
+    left: -100%; /* Ẩn sidebar mặc định */
+    transition: left 0.3s ease-in-out;
   }
 
   .admin-sidebar.active {
-    display: block; /* Show sidebar when active */
+    left: 0; /* Hiển thị sidebar khi active */
   }
 
   .admin-layout {
@@ -83,5 +102,33 @@
 
   .admin-content {
     margin-left: 0;
+  }
+}
+
+/* Toggle button for sidebar */
+.admin-sidebar-toggle {
+  display: none;
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  background-color: #2e3a46;
+  border: none;
+  color: #f1f1f1;
+  font-size: 1.5rem;
+  border-radius: 5px;
+  padding: 8px 12px;
+  cursor: pointer;
+  z-index: 1001;
+}
+
+.admin-sidebar-toggle:hover {
+  background-color: #4caf50; /* Màu xanh lá nổi bật */
+  color: #ffffff;
+}
+
+/* Hiển thị nút toggle trên màn hình nhỏ */
+@media (max-width: 768px) {
+  .admin-sidebar-toggle {
+    display: block;
   }
 }

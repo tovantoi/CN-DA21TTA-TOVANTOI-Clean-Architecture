@@ -67,28 +67,50 @@ const CustomerManagement = () => {
   };
 
   return (
-    <div className="container my-4">
+    <motion.div
+      className="container my-4"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 1 }}
+    >
       <motion.h1
         className="text-center mb-4"
         initial={{ opacity: 0, scale: 0.5 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{
           duration: 1,
-          repeat: Infinity, // Lặp lại vô hạn
-          repeatType: "reverse", // Lặp lại theo chiều ngược lại
-          repeatDelay: 2, // Đợi 4 giây (tổng thời gian sẽ là 5 giây vì thời gian animation là 1 giây)
+          ease: "easeOut",
+        }}
+        whileHover={{
+          scale: 1.1,
+          textShadow: "0px 0px 10px rgba(255, 255, 255, 0.9)",
+          color: "#ff5722",
         }}
         style={{
-          background: "linear-gradient(45deg, #ff6ec7, #ffy900)",
-          color: "red",
-          WebkitBackgroundClip: "text",
-          backgroundClip: "text",
+          fontSize: "2.5rem",
+          fontWeight: "bold",
+          color: "#333",
+          textTransform: "uppercase",
         }}
       >
         Quản lý khách hàng
       </motion.h1>
-      {error && <div className="alert alert-danger">{error}</div>}
-      <table className="table table-striped">
+      {error && (
+        <motion.div
+          className="alert alert-danger"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5 }}
+        >
+          {error}
+        </motion.div>
+      )}
+      <motion.table
+        className="table table-striped"
+        initial={{ opacity: 0, y: 50 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 1, ease: "easeOut" }}
+      >
         <thead>
           <tr>
             <th>Họ</th>
@@ -99,7 +121,11 @@ const CustomerManagement = () => {
             <th>Hành động</th>
           </tr>
         </thead>
-        <tbody>
+        <motion.tbody
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1 }}
+        >
           {loading ? (
             <tr>
               <td colSpan="6" className="text-center">
@@ -108,13 +134,17 @@ const CustomerManagement = () => {
             </tr>
           ) : customers.length > 0 ? (
             customers.map((customer) => (
-              <tr key={customer.id}>
+              <motion.tr
+                key={customer.id}
+                whileHover={{ scale: 1.02, backgroundColor: "#f8f9fa" }}
+                transition={{ duration: 0.3 }}
+              >
                 <td>{customer.firstName}</td>
                 <td>{customer.lastName}</td>
                 <td>{customer.email}</td>
                 <td>{customer.phoneNumber}</td>
                 <td>
-                  <img
+                  <motion.img
                     src={
                       customer.avatarImagePath &&
                       customer.avatarImagePath !== "string"
@@ -127,17 +157,26 @@ const CustomerManagement = () => {
                       height: "50px",
                       objectFit: "cover",
                     }}
+                    whileHover={{ scale: 1.2 }}
+                    transition={{ duration: 0.3 }}
                   />
                 </td>
                 <td>
-                  <button
+                  <motion.button
                     className="btn btn-danger"
-                    onClick={() => handleDelete(customer.id)}
+                    onClick={() =>
+                      handleDelete(
+                        customer.id,
+                        `${customer.firstName} ${customer.lastName}`
+                      )
+                    }
+                    whileHover={{ scale: 1.1, backgroundColor: "#e53935" }}
+                    whileTap={{ scale: 0.95 }}
                   >
                     Xoá
-                  </button>
+                  </motion.button>
                 </td>
-              </tr>
+              </motion.tr>
             ))
           ) : (
             <tr>
@@ -146,9 +185,9 @@ const CustomerManagement = () => {
               </td>
             </tr>
           )}
-        </tbody>
-      </table>
-    </div>
+        </motion.tbody>
+      </motion.table>
+    </motion.div>
   );
 };
 

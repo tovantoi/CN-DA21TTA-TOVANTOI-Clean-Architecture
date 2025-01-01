@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 import Swal from "sweetalert2";
 
 const AddCategory = () => {
@@ -12,7 +13,6 @@ const AddCategory = () => {
   });
   const [categories, setCategories] = useState([]);
   const [error, setError] = useState("");
-  const [successMessage, setSuccessMessage] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -24,11 +24,11 @@ const AddCategory = () => {
         color: "#716add",
         background: "#fff",
         backdrop: `
-                rgba(0,0,123,0.4)
-                url("/assets/loading.png")
-                left top
-                no-repeat
-              `,
+          rgba(0,0,123,0.4)
+          url("/assets/loading.png")
+          left top
+          no-repeat
+        `,
       });
       try {
         const response = await fetch(
@@ -108,9 +108,41 @@ const AddCategory = () => {
   };
 
   return (
-    <div className="container">
-      <h2>Thêm Danh mục</h2>
+    <motion.div
+      className="container my-4"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 1 }}
+    >
+      <motion.h2
+        className="text-center mb-4"
+        initial={{ opacity: 0, y: -50 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 1, ease: "easeOut" }}
+        whileHover={{
+          scale: 1.1,
+          textShadow: "0px 0px 10px rgba(255, 255, 255, 0.9)",
+        }}
+      >
+        Thêm Danh mục
+      </motion.h2>
+
       {error && <div className="alert alert-danger">{error}</div>}
+      <motion.button
+        className="btn btn-secondary mb-3"
+        onClick={() => navigate("/admin/category")}
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        whileHover={{
+          scale: 1.1,
+          backgroundColor: "blue",
+          color: "#ff5722", // Màu chữ trắng khi hover
+          boxShadow: "0px 5px 15px rgba(0, 0, 0, 0.2)", // Thêm bóng mờ khi hover
+        }}
+        transition={{ duration: 0.3 }}
+      >
+        ← Quay lại
+      </motion.button>
       <form onSubmit={handleSubmit}>
         <div className="form-group">
           <label htmlFor="parentId">Danh mục cha</label>
@@ -164,7 +196,7 @@ const AddCategory = () => {
             required
           />
         </div>
-        <br></br>
+        <br />
         <div className="form-group">
           <label htmlFor="isActive">Kích hoạt</label>
           <input
@@ -175,12 +207,21 @@ const AddCategory = () => {
             onChange={handleInputChange}
           />
         </div>
-        <br></br>
-        <button type="submit" className="btn btn-primary">
+        <br />
+        <motion.button
+          type="submit"
+          className="btn btn-primary"
+          whileHover={{
+            scale: 1.1,
+            backgroundColor: "#007bff",
+            boxShadow: "0px 0px 10px rgba(0, 123, 255, 0.5)",
+          }}
+          whileTap={{ scale: 0.95 }}
+        >
           Thêm
-        </button>
+        </motion.button>
       </form>
-    </div>
+    </motion.div>
   );
 };
 

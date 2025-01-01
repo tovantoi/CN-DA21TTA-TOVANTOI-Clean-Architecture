@@ -34,6 +34,8 @@ const Dashboard = () => {
   };
 
   const [color, setColor] = useState(getRandomColor());
+  const [highlight, setHighlight] = useState(false);
+
   const lineChartData = {
     labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
     datasets: [
@@ -79,11 +81,12 @@ const Dashboard = () => {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setColor(getRandomColor()); // Cập nhật màu sắc sau mỗi 5 giây
-    }, 5000); // Thời gian đổi màu là 5 giây
+      setColor(getRandomColor());
+    }, 5000);
 
-    return () => clearInterval(interval); // Dọn dẹp khi component bị hủy
+    return () => clearInterval(interval);
   }, []);
+
   return (
     <div className="dashboard">
       <motion.h1
@@ -92,78 +95,142 @@ const Dashboard = () => {
         animate={{ opacity: 1, scale: 1 }}
         transition={{
           duration: 1,
-          repeat: Infinity, // Lặp lại vô hạn
-          repeatType: "reverse", // Lặp lại theo chiều ngược lại
-          repeatDelay: 2, // Thời gian chờ trước khi lặp lại
+          repeat: Infinity,
+          repeatType: "reverse",
+          repeatDelay: 2,
         }}
         style={{
-          //background: `linear-gradient(45deg, ${color}, #ff9000)`,
           fontSize: 50,
-          color: "red",
+          color: highlight ? "gold" : color,
           WebkitBackgroundClip: "text",
           backgroundClip: "text",
         }}
+        onMouseEnter={() => setHighlight(true)}
+        onMouseLeave={() => setHighlight(false)}
       >
-        <p> CHỈ TIÊU KINH DOANH</p>
+        <motion.span
+          whileHover={{
+            scale: 1.2,
+            rotate: [0, 10, -10, 0],
+            transition: { duration: 0.5 },
+          }}
+        >
+          CHỈ TIÊU KINH DOANH
+        </motion.span>
       </motion.h1>
-      <div className="grid-container">
-        {/* Thông tin cơ bản */}
-        <div className="info-card">
+      <motion.div
+        className="grid-container"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1 }}
+      >
+        <motion.div
+          className="info-card"
+          whileHover={{
+            scale: 1.1,
+            boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.3)",
+          }}
+        >
           Số lượng bán
           <br />
           <span className="value">660</span>
-        </div>
-        <div className="info-card">
+        </motion.div>
+        <motion.div
+          className="info-card"
+          whileHover={{
+            scale: 1.1,
+            boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.3)",
+          }}
+        >
           Doanh thu KH mới
           <br />
           <span className="value">5.9100-VNĐ</span>
-        </div>
-        <div className="info-card">
+        </motion.div>
+        <motion.div
+          className="info-card"
+          whileHover={{
+            scale: 1.1,
+            boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.3)",
+          }}
+        >
           Chi phí
           <br />
           <span className="value">26.4000-VNĐ</span>
-        </div>
-        <div className="info-card">
+        </motion.div>
+        <motion.div
+          className="info-card"
+          whileHover={{
+            scale: 1.1,
+            boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.3)",
+          }}
+        >
           Lợi nhuận
           <br />
           <span className="value">30.5500-VNĐ</span>
-        </div>
+        </motion.div>
 
-        {/* Biểu đồ dạng đường */}
-        <div className="chart large-chart">
+        <motion.div
+          className="chart large-chart"
+          whileHover={{ scale: 1.05 }}
+          transition={{ duration: 0.3 }}
+        >
           <h3>Doanh thu từ khách hàng mới</h3>
           <Line
             data={lineChartData}
             options={{ responsive: true, maintainAspectRatio: false }}
           />
-        </div>
+        </motion.div>
 
-        {/* Biểu đồ dạng tròn */}
-        <div className="chart medium-chart">
+        <motion.div
+          className="chart medium-chart"
+          whileHover={{ scale: 1.05 }}
+          transition={{ duration: 0.3 }}
+        >
           <h3>Thành phần chi phí</h3>
           <Doughnut
             data={doughnutChartData}
             options={{ responsive: true, maintainAspectRatio: false }}
           />
-        </div>
+        </motion.div>
 
-        {/* Biểu đồ dạng cột */}
-        <div className="chart medium-chart">
+        <motion.div
+          className="chart medium-chart"
+          whileHover={{ scale: 1.05 }}
+          transition={{ duration: 0.3 }}
+        >
           <h3>Doanh thu gia tăng theo kênh</h3>
           <Bar
             data={barChartData}
             options={{ responsive: true, maintainAspectRatio: false }}
           />
-        </div>
+        </motion.div>
 
-        {/* Danh sách Sales Rep */}
-        <div className="sales-rep">
+        <motion.div
+          className="sales-rep"
+          whileHover={{ scale: 1.05 }}
+          transition={{ duration: 0.3 }}
+        >
           <h3>Đại diện bán hàng</h3>
-          <div className="sales-card">Văn Tới: 3.200-VNĐ</div>
-          <div className="sales-card">Quốc Ninh: 2.600-VNĐ</div>
-          <div className="sales-card">Bá Hiếu: 2.100-VNĐ</div>
-        </div>
-      </div>
+          <motion.div
+            className="sales-card"
+            whileHover={{ backgroundColor: "#36A2EB", color: "#fff" }}
+          >
+            Văn Tới: 3.200-VNĐ
+          </motion.div>
+          <motion.div
+            className="sales-card"
+            whileHover={{ backgroundColor: "#FF6384", color: "#fff" }}
+          >
+            Quốc Ninh: 2.600-VNĐ
+          </motion.div>
+          <motion.div
+            className="sales-card"
+            whileHover={{ backgroundColor: "#FFCE56", color: "#fff" }}
+          >
+            Bá Hiếu: 2.100-VNĐ
+          </motion.div>
+        </motion.div>
+      </motion.div>
     </div>
   );
 };

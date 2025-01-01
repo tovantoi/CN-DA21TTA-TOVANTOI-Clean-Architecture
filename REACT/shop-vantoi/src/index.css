@@ -410,3 +410,35 @@ footer .fw-bold {
   margin-bottom: 10px;
   text-transform: uppercase;
 }
+.account-dropdown {
+  position: relative;
+}
+
+.account-dropdown .dropdown-menu {
+  display: none; /* Ẩn menu mặc định */
+  position: absolute;
+  top: 100%; /* Hiển thị ngay bên dưới button */
+  right: 0;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  padding: 10px 0;
+}
+
+.account-dropdown .dropdown-item {
+  padding: 10px 20px;
+  color: #455a64;
+  text-decoration: none;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.account-dropdown .dropdown-item:hover {
+  background-color: #f0f0f0;
+  color: #1e88e5;
+}
+
+.account-dropdown:hover .dropdown-menu {
+  display: block; /* Hiển thị menu khi hover vào button */
+}
