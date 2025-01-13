@@ -26,9 +26,15 @@ import ProductManagement from "./pages/Admin/ProductManagement";
 import AddProduct from "./pages/Admin/AddProduct";
 import CustomerManagement from "./pages/Admin/CustomerManagement";
 import CategoryManagement from "./pages/Admin/CategoryManagement";
+import CouponManagement from "./pages/Admin/CouponManagement";
 import CategoryProductsPage from "./pages/Admin/CategoryProductsPage";
 import AddCategory from "./pages/Admin/AddCategory";
 import EditCategory from "./pages/Admin/EditCategory";
+import OrderManagement from "./pages/Admin/OrderManagement";
+import CreateCoupon from "./pages/Admin/CreateCoupon";
+import OrderDetail from "./pages/Admin/OrderDetail";
+import EditCoupon from "./pages/Admin/EditCoupon";
+import CouponDetail from "./pages/Admin/CouponDetail";
 import OrderDetailPage from "./pages/OrderDetailPage";
 import ProductEditPage from "./pages/Admin/ProductEditPage";
 import RequestOtpPage from "./pages/RequestOtpPage";
@@ -165,6 +171,12 @@ const AppContent = ({ cart, setCart, emailForOtp, setEmailForOtp }) => {
           <Route path="/admin/add-product" element={<AddProduct />} />
           <Route path="/admin/customers" element={<CustomerManagement />} />
           <Route path="/admin/category" element={<CategoryManagement />} />
+          <Route path="/admin/order" element={<OrderManagement />} />
+          <Route path="/admin/order-detail/:id" element={<OrderDetail />} />
+          <Route path="/admin/coupon" element={<CouponManagement />} />
+          <Route path="/admin/create-coupon" element={<CreateCoupon />} />
+          <Route path="/admin/coupon-detail/:id" element={<CouponDetail />} />
+          <Route path="/admin/editcoupon/:id" element={<EditCoupon />} />
           <Route
             path="/admin/category-products/:id"
             element={<CategoryProductsPage />}

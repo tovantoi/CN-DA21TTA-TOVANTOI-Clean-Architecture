@@ -154,6 +154,28 @@ const AdminSidebar = () => {
         </li>
         <li className="nav-item">
           <NavLink
+            to="/admin/coupon"
+            className={({ isActive }) =>
+              isActive ? "nav-link active" : "nav-link"
+            }
+          >
+            <FaUserFriends style={{ marginRight: "8px" }} />
+            QUẢN LÍ MÃ GIẢM GIÁ
+          </NavLink>
+        </li>
+        <li className="nav-item">
+          <NavLink
+            to="/admin/order"
+            className={({ isActive }) =>
+              isActive ? "nav-link active" : "nav-link"
+            }
+          >
+            <FaUserFriends style={{ marginRight: "8px" }} />
+            QUẢN LÍ ĐƠN HÀNG
+          </NavLink>
+        </li>
+        <li className="nav-item">
+          <NavLink
             to="/admin/request-otp"
             className={({ isActive }) =>
               isActive ? "nav-link active" : "nav-link"

@@ -35,6 +35,7 @@ namespace chuyennganh.Application.App.CouponApp.Handler
                     coupon.MaxUsage = request.MaxUsage ?? coupon.MaxUsage;
                     coupon.Discount = request.Discount ?? coupon.Discount;
                     coupon.IsActive = request.IsActive ?? coupon.IsActive;
+                    coupon.CouponEndDate = request.CouponEndDate;
 
                     await couponRepository.UpdateAsync(coupon);
                     await couponRepository.SaveChangeAsync();

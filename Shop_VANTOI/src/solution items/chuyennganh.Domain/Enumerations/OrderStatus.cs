@@ -2,10 +2,10 @@
 {
     public enum OrderStatus
     {
-        Pending,
-        Accepted,
-        Shipping,
-        Successed,
-        Canceled,
+        Pending = 0,
+        Accepted = 1,
+        Shipping = 2,
+        Successed = 3,
+        Canceled = 4
     }
 }

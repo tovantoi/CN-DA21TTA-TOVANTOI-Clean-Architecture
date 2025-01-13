@@ -12,7 +12,7 @@ namespace chuyennganh.Application.App.CouponApp.Query.Handlers
         private readonly ICouponRepository couponRepository;
         private readonly IMapper mapper;
 
-        public GetAllCouponRequestHandler(ICouponRepository couponRepository, IMapper mapper)
+        public GetAllCouponRequestHandler(IMapper mapper, ICouponRepository couponRepository)
         {
             this.couponRepository = couponRepository;
             this.mapper = mapper;
