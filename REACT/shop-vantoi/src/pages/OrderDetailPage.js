@@ -92,7 +92,7 @@ const OrderDetailPage = () => {
             <strong>Địa chỉ:</strong> {order.address?.finalAddress || "N/A"}
           </p>
           <p>
-            <strong>Trạng thái đơn hàng:</strong>{" "}
+            <strong>Trạng thái đơn hàng:</strong>
             {order.status || "Đang giao hàng"}
           </p>
           <p>

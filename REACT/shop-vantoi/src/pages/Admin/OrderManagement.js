@@ -1,5 +1,3 @@
-// src/components/OrderManagement.js
-
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -7,12 +5,12 @@ import Swal from "sweetalert2";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import * as XLSX from "xlsx";
-import { Dropdown } from "react-bootstrap"; // Nhập Dropdown từ react-bootstrap
 
 const OrderManagement = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [showDropdownId, setShowDropdownId] = useState(null); // Trạng thái để kiểm soát dropdown
 
   const navigate = useNavigate();
 
@@ -119,49 +117,86 @@ const OrderManagement = () => {
       }
     }
   };
-
-  const handlePrintInvoice = (order) => {
+  // const addCustomFonts = (doc) => {
+  //   doc.addFileToVFS("CustomFont.ttf", "base64_encoded_font_string_here");
+  //   doc.addFont("CustomFont.ttf", "CustomFont", "normal");
+  //   doc.setFont("CustomFont");
+  // };
+  const handlePrintInvoice = async (order) => {
     const doc = new jsPDF();
+    // addCustomFonts(doc);
 
-    doc.text(`HÓA ĐƠN`, 105, 30, null, null, "center");
+    // Tiêu đề hóa đơn
+    doc.setFontSize(20);
+    doc.text("HÓA ĐƠN", 105, 30, null, null, "center");
 
+    // Thông tin cửa hàng
     doc.setFontSize(12);
     doc.text("Cửa hàng Thời trang XYZ", 14, 50);
     doc.text("Địa chỉ: 123 Đường ABC, Thành phố XYZ", 14, 55);
     doc.text("Điện thoại: 0123-456-789", 14, 60);
 
-    doc.text(`Khách hàng: ${order.customerName}`, 14, 70);
-    doc.text(`Địa chỉ giao hàng: ${order.customerAddressId}`, 14, 75);
+    // Lấy thông tin khách hàng từ API
+    try {
+      const response = await fetch(
+        `https://localhost:7022/minimal/api/get-order-by-customer-id?id=${order.customerId}`
+      );
+      if (!response.ok) {
+        throw new Error("Không thể tải thông tin khách hàng.");
+      }
 
-    doc.line(10, 80, 200, 80);
+      const { address } = order;
+      const fullName = order.address?.fullName || "N/A";
+      const phone = order.address?.phone || "N/A";
+      const finalAddress = order.address?.finalAddress || "N/A";
 
-    autoTable(doc, {
-      startY: 85,
-      head: [["Sản phẩm", "Số lượng", "Giá", "Tổng"]],
-      body: order.items.map((item) => [
-        item.productName,
-        item.quantity,
-        `${item.price} VND`,
-        `${item.total} VND`,
-      ]),
-      theme: "grid",
-      styles: { fontSize: 10 },
-      headStyles: { fillColor: [22, 160, 133] },
-      margin: { top: 10 },
-    });
+      // Thông tin khách hàng
+      doc.text(`Khách hàng: ${fullName}`, 14, 70);
+      doc.text(`Số điện thoại: ${phone}`, 14, 75);
+      doc.text(`Địa chỉ giao hàng: ${finalAddress}`, 14, 80);
 
-    const totalY = doc.lastAutoTable.finalY + 10;
-    doc.setFontSize(12);
-    doc.text(`Tổng tiền: ${order.totalPrice} VND`, 14, totalY);
+      doc.line(10, 85, 200, 85); // Vẽ đường ngang
 
-    const date = new Date();
-    doc.text(
-      `Ngày xuất hóa đơn: ${date.toLocaleDateString()}`,
-      14,
-      totalY + 10
-    );
+      // Bảng sản phẩm
+      autoTable(doc, {
+        startY: 90,
+        head: [["Sản phẩm", "Số lượng", "Giá", "Tổng"]],
+        body: (order.orderItems || []).map((item) => [
+          item.product.productName || "Tên sản phẩm không có",
+          item.quantity || 0,
+          `${item.product.price} VND`,
+          `${(item.quantity * item.product.price).toLocaleString()} VND`,
+        ]),
+        theme: "grid",
+        styles: { fontSize: 10 },
+        headStyles: { fillColor: [22, 160, 133] },
+        margin: { top: 10 },
+      });
 
-    doc.save(`invoice_order_${order.id}.pdf`);
+      const totalY = doc.lastAutoTable.finalY + 10;
+      doc.setFontSize(12);
+      doc.text(
+        `Tổng tiền: ${order.totalPrice.toLocaleString()} VND`,
+        14,
+        totalY
+      );
+
+      const date = new Date();
+      doc.text(
+        `Ngày xuất hóa đơn: ${date.toLocaleDateString()}`,
+        14,
+        totalY + 10
+      );
+
+      doc.save(`invoice_order_${order.id}.pdf`);
+    } catch (error) {
+      Swal.fire({
+        title: "Lỗi!",
+        text: error.message,
+        icon: "error",
+        confirmButtonText: "OK",
+      });
+    }
   };
 
   const handleExportToExcel = (order) => {
@@ -179,6 +214,23 @@ const OrderManagement = () => {
     XLSX.utils.book_append_sheet(workbook, worksheet, "Order");
 
     XLSX.writeFile(workbook, `invoice_order_${order.id}.xlsx`);
+  };
+
+  // Hàm để hiển thị hộp thoại chọn loại file khi nhấn nút IN
+  const handleShowPrintOptions = (order) => {
+    Swal.fire({
+      title: "Chọn loại file để in",
+      text: "Bạn muốn xuất hóa đơn dưới dạng:",
+      showCancelButton: true,
+      confirmButtonText: "PDF",
+      cancelButtonText: "Excel",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        handlePrintInvoice(order); // Gọi hàm in hóa đơn PDF
+      } else if (result.dismiss === Swal.DismissReason.cancel) {
+        handleExportToExcel(order); // Gọi hàm xuất hóa đơn Excel
+      }
+    });
   };
 
   return (
@@ -224,6 +276,16 @@ const OrderManagement = () => {
                       >
                         Xem chi tiết
                       </button>
+
+                      {/* Nút in hóa đơn */}
+                      <button
+                        className="btn btn-primary"
+                        onClick={() => handleShowPrintOptions(order)} // Hiển thị hộp thoại khi nhấn nút IN
+                      >
+                        IN
+                      </button>
+
+                      {/* Nút chọn trạng thái */}
                       <button
                         className="btn btn-warning"
                         onClick={() =>
@@ -232,24 +294,6 @@ const OrderManagement = () => {
                       >
                         Chọn trạng thái
                       </button>
-                      <Dropdown className="d-inline mx-2">
-                        <Dropdown.Toggle variant="primary" id="dropdown-basic">
-                          IN
-                        </Dropdown.Toggle>
-
-                        <Dropdown.Menu>
-                          <Dropdown.Item
-                            onClick={() => handlePrintInvoice(order)}
-                          >
-                            PDF
-                          </Dropdown.Item>
-                          <Dropdown.Item
-                            onClick={() => handleExportToExcel(order)}
-                          >
-                            Excel
-                          </Dropdown.Item>
-                        </Dropdown.Menu>
-                      </Dropdown>
                     </td>
                   </motion.tr>
                 );
