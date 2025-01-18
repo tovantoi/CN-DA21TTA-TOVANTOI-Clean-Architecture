@@ -211,7 +211,7 @@ const CheckoutPage = ({ cart, setCart }) => {
 
   return (
     <div className="container my-4">
-      <h2 className="text-center">Thanh toán</h2>
+      <h2 className="text-center">Đặt hàng</h2>
       {successMessage && (
         <div className="alert alert-success text-center">{successMessage}</div>
       )}
